@@ -27,6 +27,7 @@
     "@nestjs/graphql": "^12.2.1",
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/adapter-pg": "^5.22.0",
+    "@prisma/client": "^5.22.0",
     "graphql": "^16.9.0",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.0",
