@@ -6,3 +6,39 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum ScheduleType {
+  SCHEDULE_6x1
+  SCHEDULE_5x1
+  SCHEDULE_12x36
+}
+
+model Employee {
+  id        String   @id @default(uuid())
+  name      String
+  lastName  String
+  birthDate DateTime @db.Date()
+  status    Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @db.Timestamp()
+
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  scheduleId Int
+  skills     Skill[]
+}
+
+model Schedule {
+  id        Int          @id @default(autoincrement())
+  startTime DateTime     @db.Time()
+  endTime   DateTime     @db.Time()
+  type      ScheduleType
+  status    Boolean      @default(true)
+  employee  Employee[]
+}
+
+model Skill {
+  id          Int        @id @default(autoincrement())
+  description String
+  status      Boolean    @default(true)
+  employees   Employee[]
+}
