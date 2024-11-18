@@ -7,17 +7,19 @@ import { AppService } from "./app.service";
 import { EmployeeModule } from "./employee/employee.module";
 import { ScheduleModule } from "./schedule/schedule.module";
 import { SkillModule } from "./skill/skill.module";
-import { ApolloDriver } from "@nestjs/apollo";
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
 	imports: [
-		GraphQLModule.forRoot({
+		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
 			autoSchemaFile: path.join(process.cwd(), "src/schema.gql"),
 		}),
 		EmployeeModule,
 		ScheduleModule,
 		SkillModule,
+		PrismaModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
