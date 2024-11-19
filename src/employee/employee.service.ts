@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { Pagination } from "src/pagination/pagination.interface";
+import { Prisma } from "@prisma/client";
+import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
+import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeDto } from "./dto/employee.dto";
 
 @Injectable()
@@ -25,7 +27,16 @@ export class EmployeeService {
 		});
 	}
 
-	async create(data: Employee): Promise<EmployeeDto> {
+	async create(
+		employee: EmployeeCreateDto,
+		skills: number[],
+	): Promise<EmployeeDto> {
+		const skillsIds = skills.map((id) => {
+			return { id };
+		});
+
+		const data: Prisma.EmployeeCreateInput = employee;
+		data.skills = { connect: skillsIds };
 		return this.prisma.employee.create({ data });
 	}
 
