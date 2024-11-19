@@ -1,12 +1,13 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { ScheduleType } from "@prisma/client";
+import { TimeScalar } from "src/graphql/scalars/time.scalar";
 
 @InputType()
 export class ScheduleCreateDto {
-	@Field(() => Date)
+	@Field(() => TimeScalar)
 	startTime: Date;
 
-	@Field(() => Date)
+	@Field(() => TimeScalar)
 	endTime: Date;
 
 	// TODO Type enum
