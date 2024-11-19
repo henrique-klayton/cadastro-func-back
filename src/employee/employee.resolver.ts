@@ -12,8 +12,8 @@ export class EmployeeResolver {
 	@Query(() => EmployeeDto)
 	async employee(
 		@Args("id", { type: () => ID }) id: string,
-	): Promise<EmployeeDto | null> {
-		const employee = this.service.find(id);
+	): Promise<EmployeeDto> {
+		const employee = await this.service.find(id);
 		if (employee == null)
 			throw new NotFoundException("Funcionário não encontrado");
 		return employee;
