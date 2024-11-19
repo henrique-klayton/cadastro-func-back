@@ -12,8 +12,8 @@ export class SkillResolver {
 	async skill(
 		@Args("id", { type: () => Int })
 		id: number,
-	): Promise<SkillDto | null> {
-		const skill = this.service.find(id);
+	): Promise<SkillDto> {
+		const skill = await this.service.find(id);
 		if (skill == null) throw new NotFoundException("Habilidade não encontrada");
 		return skill;
 	}

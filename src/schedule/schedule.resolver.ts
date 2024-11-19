@@ -12,8 +12,8 @@ export class ScheduleResolver {
 	async schedule(
 		@Args("id", { type: () => Int })
 		id: number,
-	): Promise<ScheduleDto | null> {
-		const schedule = this.service.find(id);
+	): Promise<ScheduleDto> {
+		const schedule = await this.service.find(id);
 		if (schedule == null) throw new NotFoundException("Escala não encontrada");
 		return schedule;
 	}
