@@ -9,7 +9,7 @@ datasource db {
 
 enum ScheduleType {
   SCHEDULE_6x1
-  SCHEDULE_5x1
+  SCHEDULE_5x2
   SCHEDULE_12x36
 }
 
