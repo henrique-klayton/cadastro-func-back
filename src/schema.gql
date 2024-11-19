@@ -2,14 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Schedule {
-  id: Int!
-  startTime: DateTime!
-  endTime: DateTime!
-  type: String!
+type EmployeeDto {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  birthDate: DateTime!
   status: Boolean!
-  employee: EmployeeDto
-  employeeId: Int
+  scheduleId: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """
@@ -17,29 +18,41 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Skill {
+type ScheduleDto {
+  id: Int!
+  startTime: DateTime!
+  endTime: DateTime!
+  type: ScheduleType!
+  status: Boolean!
+}
+
+enum ScheduleType {
+  SCHEDULE_6x1
+  SCHEDULE_5x1
+  SCHEDULE_12x36
+}
+
+type SkillDto {
   id: Int!
   description: String!
   status: Boolean!
 }
 
-type EmployeeDto {
-  id: ID!
+type Query {
+  employee(id: ID!): EmployeeDto!
+  employeeList(amount: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [EmployeeDto!]!
+  schedule(id: Int!): ScheduleDto!
+  skill(id: Int!): SkillDto!
+}
+
+type Mutation {
+  createEmployee(employee: EmployeeCreateDto!, skills: [Int!]!): EmployeeDto!
+}
+
+input EmployeeCreateDto {
   firstName: String!
   lastName: String!
   birthDate: DateTime!
   status: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  schedule: Schedule
-  scheduleId: Int
-  skills: [Skill!]
-}
-
-type Query {
-  employee(id: ID!): EmployeeDto!
-  employeeList(amount: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [EmployeeDto!]!
-  asd(id: ID!): EmployeeDto!
-  schedule(id: Int!): Schedule!
-  skill(id: Int!): Skill!
+  scheduleId: Int!
 }
