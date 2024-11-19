@@ -1,7 +1,9 @@
-import { Args, ID, Int, Query, ResolveField, Resolver } from "@nestjs/graphql";
+import { NotFoundException } from "@nestjs/common";
+import { Args, ID, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { SkillCreateDto } from "src/skill/dto/skill-create.dto";
+import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeDto } from "./dto/employee.dto";
 import { EmployeeService } from "./employee.service";
-import { NotFoundException } from "@nestjs/common";
 
 @Resolver(() => EmployeeDto)
 export class EmployeeResolver {
@@ -29,8 +31,11 @@ export class EmployeeResolver {
 		return this.service.findList({ take, skip }, filterStatus);
 	}
 
-	@Query(() => EmployeeDto)
-	async asd(@Args("id", { type: () => ID }) id: string) {
-		return this.service.find(id);
+	@Mutation(() => EmployeeDto)
+	async createEmployee(
+		@Args("employee", { type: () => EmployeeCreateDto }) employee: EmployeeCreateDto,
+		@Args("skills", { type: () => [Int] }) skills: number[],
+	) {
+		return this.service.create(employee, skills);
 	}
 }
