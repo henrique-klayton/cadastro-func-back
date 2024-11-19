@@ -15,7 +15,7 @@ export class EmployeeService {
 		});
 	}
 
-	async findList(
+	async findWithPagination(
 		{ take, skip }: Pagination,
 		filterStatus = true,
 	): Promise<EmployeeDto[]> {
