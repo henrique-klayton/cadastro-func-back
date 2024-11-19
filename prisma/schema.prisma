@@ -35,10 +35,9 @@ model Schedule {
 }
 
 model Skill {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   description String
-  status      Boolean  @default(true)
+  status      Boolean @default(true)
 
-  Employee    Employee @relation(fields: [employeeId], references: [id])
-  employeeId  String
+  employees Employee[]
 }
