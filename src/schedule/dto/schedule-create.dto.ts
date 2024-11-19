@@ -1,18 +1,15 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { ScheduleCreateDto } from "./schedule-create.dto";
+import { Field, InputType } from "@nestjs/graphql";
 import { ScheduleType } from "@prisma/client";
 
-@ObjectType()
-export class ScheduleDto extends ScheduleCreateDto {
-	@Field(() => Int)
-	id: number;
-
+@InputType()
+export class ScheduleCreateDto {
 	@Field(() => Date)
 	startTime: Date;
 
 	@Field(() => Date)
 	endTime: Date;
 
+	// TODO Type enum
 	@Field(() => ScheduleType)
 	type: ScheduleType;
 

@@ -1,14 +1,14 @@
 import path from "node:path";
 
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { EmployeeModule } from "./employee/employee.module";
+import { PrismaModule } from "./prisma/prisma.module";
 import { ScheduleModule } from "./schedule/schedule.module";
 import { SkillModule } from "./skill/skill.module";
-import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
 	imports: [
@@ -16,10 +16,10 @@ import { PrismaModule } from "./prisma/prisma.module";
 			driver: ApolloDriver,
 			autoSchemaFile: path.join(process.cwd(), "src/schema.gql"),
 		}),
+		PrismaModule,
 		EmployeeModule,
 		ScheduleModule,
 		SkillModule,
-		PrismaModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

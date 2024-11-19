@@ -1,8 +1,9 @@
-import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { SkillCreateDto } from "./skill-create.dto";
 import { EmployeeDto } from "src/employee/dto/employee.dto";
 
 @ObjectType()
-export class Skill {
+export class SkillDto extends SkillCreateDto {
 	@Field(() => Int)
 	id: number;
 
@@ -12,9 +13,6 @@ export class Skill {
 	@Field(() => Boolean)
 	status: boolean;
 
-	// @Field(() => Employee, { nullable: true })
-	// employee?: Employee;
-
-	// @Field(() => Int, { nullable: true })
-	// employeeId?: number;
+	// @Field(() => [EmployeeDto], { nullable: true })
+	// employees?: EmployeeDto[];
 }
