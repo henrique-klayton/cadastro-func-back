@@ -20,11 +20,14 @@ scalar DateTime
 
 type ScheduleDto {
   id: Int!
-  startTime: DateTime!
-  endTime: DateTime!
+  startTime: Time!
+  endTime: Time!
   type: ScheduleType!
   status: Boolean!
 }
+
+"""Format representating time with timezone"""
+scalar Time
 
 enum ScheduleType {
   SCHEDULE_6x1
@@ -47,12 +50,26 @@ type Query {
 
 type Mutation {
   createEmployee(employee: EmployeeCreateDto!, skills: [Int!]!): EmployeeDto!
+  createSchedule(schedule: ScheduleCreateDto!): ScheduleDto!
+  createSkill(skill: SkillCreateDto!, employees: [ID!]!): SkillDto!
 }
 
 input EmployeeCreateDto {
   firstName: String!
   lastName: String!
   birthDate: DateTime!
-  status: Boolean!
+  status: Boolean! = true
   scheduleId: Int!
+}
+
+input ScheduleCreateDto {
+  startTime: Time!
+  endTime: Time!
+  type: ScheduleType!
+  status: Boolean! = true
+}
+
+input SkillCreateDto {
+  description: String!
+  status: Boolean! = true
 }

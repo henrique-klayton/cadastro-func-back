@@ -6,6 +6,7 @@ import { GraphQLModule } from "@nestjs/graphql";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { EmployeeModule } from "./employee/employee.module";
+import { TimeScalar } from "./graphql/scalars/time.scalar";
 import { PrismaModule } from "./prisma/prisma.module";
 import { ScheduleModule } from "./schedule/schedule.module";
 import { SkillModule } from "./skill/skill.module";
@@ -15,6 +16,7 @@ import { SkillModule } from "./skill/skill.module";
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
 			autoSchemaFile: path.join(process.cwd(), "src/schema.gql"),
+			resolvers: { Time: TimeScalar },
 		}),
 		PrismaModule,
 		EmployeeModule,
