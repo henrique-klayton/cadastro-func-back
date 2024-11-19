@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 
 @InputType()
 export class EmployeeCreateDto {
@@ -11,8 +11,8 @@ export class EmployeeCreateDto {
 	@Field(() => Date)
 	birthDate: Date;
 
-	@Field(() => Boolean)
-	status: boolean;
+	@Field(() => Boolean, { defaultValue: true })
+	status = true;
 
 	@Field(() => Int)
 	scheduleId: number;

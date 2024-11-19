@@ -13,6 +13,6 @@ export class ScheduleCreateDto {
 	@Field(() => ScheduleType)
 	type: ScheduleType;
 
-	@Field(() => Boolean)
-	status: boolean;
+	@Field(() => Boolean, { defaultValue: true })
+	status = true;
 }
