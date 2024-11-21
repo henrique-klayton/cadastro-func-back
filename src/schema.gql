@@ -52,8 +52,14 @@ type Query {
 
 type Mutation {
   createEmployee(employee: EmployeeCreateDto!, skills: [Int!]!): EmployeeDto!
+  updateEmployee(id: ID!, employee: EmployeeUpdateDto!, skills: [Int!]): EmployeeDto!
+  updateEmployeeStatus(id: ID!, status: Boolean!): EmployeeDto!
   createSchedule(schedule: ScheduleCreateDto!): ScheduleDto!
+  updateSchedule(id: Int!, schedule: ScheduleUpdateDto!): ScheduleDto!
+  updateScheduleStatus(id: Int!, status: Boolean!): ScheduleDto!
   createSkill(skill: SkillCreateDto!, employees: [ID!]!): SkillDto!
+  updateSkill(id: Int!, skill: SkillUpdateDto!, employees: [ID!]): SkillDto!
+  updateSkillStatus(id: Int!, status: Boolean!): SkillDto!
 }
 
 input EmployeeCreateDto {
@@ -64,6 +70,14 @@ input EmployeeCreateDto {
   scheduleId: Int!
 }
 
+input EmployeeUpdateDto {
+  firstName: String
+  lastName: String
+  birthDate: DateTime
+  status: Boolean = true
+  scheduleId: Int
+}
+
 input ScheduleCreateDto {
   startTime: Time!
   endTime: Time!
@@ -71,7 +85,19 @@ input ScheduleCreateDto {
   status: Boolean! = true
 }
 
+input ScheduleUpdateDto {
+  startTime: Time
+  endTime: Time
+  type: ScheduleType
+  status: Boolean = true
+}
+
 input SkillCreateDto {
   description: String!
   status: Boolean! = true
+}
+
+input SkillUpdateDto {
+  description: String
+  status: Boolean = true
 }

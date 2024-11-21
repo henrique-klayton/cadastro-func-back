@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
+import { ScheduleUpdateDto } from "./dto/schedule-update.dto";
 import { ScheduleDto } from "./dto/schedule.dto";
 
 @Injectable()
@@ -28,5 +29,16 @@ export class ScheduleService {
 
 	async create(data: ScheduleCreateDto): Promise<ScheduleDto> {
 		return this.prisma.schedule.create({ data });
+	}
+
+	async update(id: number, data: ScheduleUpdateDto): Promise<ScheduleDto> {
+		return this.prisma.schedule.update({ where: { id }, data });
+	}
+
+	async updateStatus(id: number, status: boolean): Promise<ScheduleDto> {
+		return this.prisma.schedule.update({
+			where: { id },
+			data: { status },
+		});
 	}
 }

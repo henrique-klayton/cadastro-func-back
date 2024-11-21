@@ -1,7 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Args, ID, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { SkillCreateDto } from "src/skill/dto/skill-create.dto";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
+import { EmployeeUpdateDto } from "./dto/employee-update.dto";
 import { EmployeeDto } from "./dto/employee.dto";
 import { EmployeeService } from "./employee.service";
 import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.args";
@@ -35,5 +35,27 @@ export class EmployeeResolver {
 		skills: number[],
 	) {
 		return this.service.create(employee, skills);
+	}
+
+	@Mutation(() => EmployeeDto)
+	async updateEmployee(
+		@Args("id", { type: () => ID })
+		id: string,
+		@Args("employee", { type: () => EmployeeUpdateDto })
+		employee: EmployeeUpdateDto,
+		@Args("skills", { type: () => [Int], nullable: true })
+		skills?: number[],
+	) {
+		return this.service.update(id, employee, skills);
+	}
+
+	@Mutation(() => EmployeeDto)
+	async updateEmployeeStatus(
+		@Args("id", { type: () => ID })
+		id: string,
+		@Args("status", { type: () => Boolean })
+		status: boolean,
+	) {
+		return this.service.updateStatus(id, status);
 	}
 }

@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { SkillCreateDto } from "./dto/skill-create.dto";
+import { SkillUpdateDto } from "./dto/skill-update.dto";
 import { SkillDto } from "./dto/skill.dto";
 
 @Injectable()
@@ -35,5 +36,32 @@ export class SkillService {
 		const data: Prisma.SkillCreateInput = skill;
 		data.employees = { connect: employeesIds };
 		return this.prisma.skill.create({ data });
+	}
+
+	async update(
+		id: number,
+		skill: SkillUpdateDto,
+		employees?: string[],
+	): Promise<SkillDto> {
+		const data: Prisma.SkillUpdateInput = skill;
+		if (employees != null) {
+			const employeesIds = employees.map((id) => {
+				return { id, NOT: { status: false } };
+			});
+			data.employees = { connect: employeesIds };
+		}
+
+		return this.prisma.skill.update({ where: { id }, data }).catch((err) => {
+			throw new BadRequestException("Error while updating skill", {
+				cause: err,
+			});
+		});
+	}
+
+	async updateStatus(id: number, status: boolean): Promise<SkillDto> {
+		return this.prisma.skill.update({
+			where: { id },
+			data: { status },
+		});
 	}
 }
