@@ -33,12 +33,19 @@ export class EmployeeService {
 		skills: number[],
 	): Promise<EmployeeDto> {
 		const skillsIds = skills.map((id) => {
-			return { id };
+			return { id, NOT: { status: false } };
 		});
 
 		const data: Prisma.EmployeeCreateInput = employee;
 		data.skills = { connect: skillsIds };
-		return this.prisma.employee.create({ data });
+		data.schedule = {
+			connect: { id: employee.scheduleId, NOT: { status: false } },
+		};
+		return this.prisma.employee.create({ data }).catch((err) => {
+			throw new BadRequestException("Error while creating employee", {
+				cause: err,
+			});
+		});
 	}
 
 	async update(
@@ -55,7 +62,7 @@ export class EmployeeService {
 		}
 
 		return this.prisma.employee.update({ where: { id }, data }).catch((err) => {
-			throw new BadRequestException("Error while updating skill", {
+			throw new BadRequestException("Error while updating employee", {
 				cause: err,
 			});
 		});

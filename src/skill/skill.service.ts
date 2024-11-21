@@ -30,12 +30,16 @@ export class SkillService {
 
 	async create(skill: SkillCreateDto, employees: string[]): Promise<SkillDto> {
 		const employeesIds = employees.map((id) => {
-			return { id };
+			return { id, NOT: { status: false } };
 		});
 
 		const data: Prisma.SkillCreateInput = skill;
 		data.employees = { connect: employeesIds };
-		return this.prisma.skill.create({ data });
+		return this.prisma.skill.create({ data }).catch((err) => {
+			throw new BadRequestException("Error while creating skill", {
+				cause: err,
+			});
+		});
 	}
 
 	async update(
