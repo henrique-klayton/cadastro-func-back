@@ -35,8 +35,8 @@ export class SkillResolver {
 	async createSkill(
 		@Args("skill", { type: () => SkillCreateDto })
 		skill: SkillCreateDto,
-		@Args("employees", { type: () => [ID] })
-		employees: string[],
+		@Args("employees", { type: () => [ID], nullable: true })
+		employees?: string[],
 	) {
 		return this.service.create(skill, employees);
 	}

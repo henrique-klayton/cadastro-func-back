@@ -35,8 +35,8 @@ export class EmployeeResolver {
 	async createEmployee(
 		@Args("employee", { type: () => EmployeeCreateDto })
 		employee: EmployeeCreateDto,
-		@Args("skills", { type: () => [Int] })
-		skills: number[],
+		@Args("skills", { type: () => [Int], nullable: true })
+		skills?: number[],
 	) {
 		return this.service.create(employee, skills);
 	}
