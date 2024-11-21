@@ -5,11 +5,11 @@ import { Min } from "class-validator";
 export class FindWithPaginationArgs {
 	@Field(() => Int, { name: "amount", defaultValue: 10 })
 	@Min(1)
-	take: number;
+	amount: number;
 
 	@Field(() => Int, { name: "offset", defaultValue: 0 })
 	@Min(0)
-	skip: number;
+	offset: number;
 
 	@Field(() => Boolean, { defaultValue: true })
 	filterStatus: boolean;
