@@ -1,6 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 import { Prisma } from "@prisma/client";
-import { IsNotEmpty } from "class-validator";
 
 @InputType()
 export class EmployeeCreateDto {
@@ -16,9 +15,10 @@ export class EmployeeCreateDto {
 	@Field(() => Boolean, { defaultValue: true })
 	status = true;
 
-	@Field(() => Int)
-	@IsNotEmpty()
-	scheduleId?: number;
+	@Field(() => Int, { nullable: true })
+	scheduleId?: number | null;
 
-	schedule: Prisma.ScheduleCreateNestedOneWithoutEmployeesInput = { connect: { id: 0 } };
+	schedule: Prisma.ScheduleCreateNestedOneWithoutEmployeesInput = {
+		connect: { id: 0 },
+	};
 }

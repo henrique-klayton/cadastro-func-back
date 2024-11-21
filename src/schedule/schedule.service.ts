@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
@@ -32,13 +33,12 @@ export class ScheduleService {
 	}
 
 	async update(id: number, data: ScheduleUpdateDto): Promise<ScheduleDto> {
-		return this.prisma.schedule.update({ where: { id }, data });
-	}
-
-	async updateStatus(id: number, status: boolean): Promise<ScheduleDto> {
-		return this.prisma.schedule.update({
-			where: { id },
-			data: { status },
+		const where: Prisma.ScheduleWhereUniqueInput = { id };
+		if (!data.status) where.employees = { none: { status: true } };
+		return this.prisma.schedule.update({ where, data }).catch((err) => {
+			throw new BadRequestException("Error while updating schedule", {
+				cause: err,
+			});
 		});
 	}
 

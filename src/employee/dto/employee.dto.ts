@@ -17,8 +17,8 @@ export class EmployeeDto {
 	@Field(() => Boolean)
 	status: boolean;
 
-	@Field(() => Int)
-	scheduleId: number;
+	@Field(() => Int, { nullable: true })
+	scheduleId: number | null;
 
 	@Field(() => Date)
 	createdAt: Date;
