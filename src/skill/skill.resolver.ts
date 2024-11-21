@@ -62,4 +62,12 @@ export class SkillResolver {
 	) {
 		return this.service.updateStatus(id, status);
 	}
+
+	@Mutation(() => SkillDto)
+	async deleteSkill(
+		@Args("id", { type: () => Int })
+		id: number,
+	) {
+		return this.service.delete(id);
+	}
 }

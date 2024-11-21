@@ -86,6 +86,10 @@ export class EmployeeService {
 	}
 
 	async delete(id: string): Promise<EmployeeDto> {
-		return this.prisma.employee.delete({ where: { id } });
+		return this.prisma.employee.delete({ where: { id } }).catch((err) => {
+			throw new BadRequestException("Error while deleting employee", {
+				cause: err,
+			});
+		});
 	}
 }

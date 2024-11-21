@@ -78,4 +78,12 @@ export class SkillService {
 			data: { status },
 		});
 	}
+
+	async delete(id: number): Promise<SkillDto> {
+		return this.prisma.skill.delete({ where: { id } }).catch((err) => {
+			throw new BadRequestException("Error while deleting skill", {
+				cause: err,
+			});
+		});
+	}
 }
