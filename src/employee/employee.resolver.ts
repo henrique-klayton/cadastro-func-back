@@ -60,7 +60,7 @@ export class EmployeeResolver {
 		@Args("status", { type: () => Boolean })
 		status: boolean,
 	) {
-		return this.service.updateStatus(id, status);
+		return this.service.update(id, { status });
 	}
 
 	@Mutation(() => EmployeeDto)

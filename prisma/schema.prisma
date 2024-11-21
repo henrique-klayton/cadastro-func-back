@@ -22,8 +22,8 @@ model Employee {
   createdAt DateTime @default(now()) @db.Timestamp()
   updatedAt DateTime @default(now()) @db.Timestamp()
 
-  scheduleId Int
-  schedule   Schedule         @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
+  scheduleId Int?
+  schedule   Schedule?         @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
   skills     EmployeeSkills[]
 }
 

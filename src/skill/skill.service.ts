@@ -54,7 +54,10 @@ export class SkillService {
 		employeesIds?: string[],
 	): Promise<SkillDto> {
 		const data: Prisma.SkillUpdateInput = skill;
-		if (employeesIds != null) {
+		const where: Prisma.SkillWhereUniqueInput = { id };
+
+		// Update Employees
+		if (employeesIds != null && skill.status) {
 			data.employees = {
 				connectOrCreate: employeesIds.map((employeeId) => ({
 					where: { employeeId_skillId: { employeeId, skillId: id } },
@@ -65,17 +68,15 @@ export class SkillService {
 			};
 		}
 
+		// Check for active employees before deactivate
+		if (!skill.status) {
+			where.employees = { none: { employee: { status: true } } };
+		}
+
 		return this.prisma.skill.update({ where: { id }, data }).catch((err) => {
 			throw new BadRequestException("Error while updating skill", {
 				cause: err,
 			});
-		});
-	}
-
-	async updateStatus(id: number, status: boolean): Promise<SkillDto> {
-		return this.prisma.skill.update({
-			where: { id },
-			data: { status },
 		});
 	}
 

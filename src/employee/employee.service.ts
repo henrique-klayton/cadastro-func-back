@@ -5,7 +5,6 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeUpdateDto } from "./dto/employee-update.dto";
 import { EmployeeDto } from "./dto/employee.dto";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 @Injectable()
 export class EmployeeService {
@@ -35,6 +34,11 @@ export class EmployeeService {
 	): Promise<EmployeeDto> {
 		const data: Prisma.EmployeeCreateInput = employee;
 		if (skillsIds != null) {
+			if (!employee.status) {
+				throw new BadRequestException(
+					"Cannot create inactive employee with skills",
+				);
+			}
 			data.skills = {
 				create: skillsIds.map((id) => ({
 					skill: { connect: { id, NOT: { status: false } } },
@@ -42,9 +46,16 @@ export class EmployeeService {
 			};
 		}
 
-		data.schedule = {
-			connect: { id: employee.scheduleId, NOT: { status: false } },
-		};
+		if (employee.scheduleId != null) {
+			if (!employee.status) {
+				throw new BadRequestException(
+					"Cannot create inactive employee with schedule",
+				);
+			}
+			data.schedule = {
+				connect: { id: employee.scheduleId, NOT: { status: false } },
+			};
+		}
 		employee.scheduleId = undefined;
 
 		return this.prisma.employee.create({ data }).catch((err) => {
@@ -60,7 +71,9 @@ export class EmployeeService {
 		skillsIds?: number[],
 	): Promise<EmployeeDto> {
 		const data: Prisma.EmployeeUpdateInput = employee;
-		if (skillsIds != null) {
+
+		// Update Skills
+		if (skillsIds != null && employee.status) {
 			data.skills = {
 				connectOrCreate: skillsIds.map((skillId) => ({
 					where: { employeeId_skillId: { employeeId: id, skillId } },
@@ -71,17 +84,25 @@ export class EmployeeService {
 			};
 		}
 
+		// Update Schedule
+		if (employee.scheduleId != null && employee.status) {
+			data.schedule = {
+				connect: { id: employee.scheduleId, NOT: { status: false } },
+			};
+			employee.scheduleId = undefined;
+		}
+
+		// Disconnect relations when deactivating object
+		if (!employee.status) {
+			data.skills = { deleteMany: { employeeId: id } };
+			data.schedule = { disconnect: {} };
+			employee.scheduleId = undefined;
+		}
+
 		return this.prisma.employee.update({ where: { id }, data }).catch((err) => {
 			throw new BadRequestException("Error while updating employee", {
 				cause: err,
 			});
-		});
-	}
-
-	async updateStatus(id: string, status: boolean): Promise<EmployeeDto> {
-		return this.prisma.employee.update({
-			where: { id },
-			data: { status },
 		});
 	}
 

@@ -8,7 +8,7 @@ type EmployeeDto {
   lastName: String!
   birthDate: DateTime!
   status: Boolean!
-  scheduleId: Int!
+  scheduleId: Int
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -70,7 +70,7 @@ input EmployeeCreateDto {
   lastName: String!
   birthDate: DateTime!
   status: Boolean! = true
-  scheduleId: Int!
+  scheduleId: Int
 }
 
 input EmployeeUpdateDto {
