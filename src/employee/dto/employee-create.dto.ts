@@ -16,4 +16,6 @@ export class EmployeeCreateDto {
 
 	@Field(() => Int)
 	scheduleId: number;
+
+	schedule = { connect: { id: 0 } };
 }
