@@ -28,13 +28,19 @@ export class SkillService {
 		});
 	}
 
-	async create(skill: SkillCreateDto, employees: string[]): Promise<SkillDto> {
-		const employeesIds = employees.map((id) => {
-			return { id, NOT: { status: false } };
-		});
-
+	async create(
+		skill: SkillCreateDto,
+		employeesIds?: string[],
+	): Promise<SkillDto> {
 		const data: Prisma.SkillCreateInput = skill;
-		data.employees = { connect: employeesIds };
+		if (employeesIds != null) {
+			data.employees = {
+				create: employeesIds.map((id) => ({
+					employee: { connect: { id, NOT: { status: false } } },
+				})),
+			};
+		}
+
 		return this.prisma.skill.create({ data }).catch((err) => {
 			throw new BadRequestException("Error while creating skill", {
 				cause: err,
@@ -45,14 +51,18 @@ export class SkillService {
 	async update(
 		id: number,
 		skill: SkillUpdateDto,
-		employees?: string[],
+		employeesIds?: string[],
 	): Promise<SkillDto> {
 		const data: Prisma.SkillUpdateInput = skill;
-		if (employees != null) {
-			const employeesIds = employees.map((id) => {
-				return { id, NOT: { status: false } };
-			});
-			data.employees = { connect: employeesIds };
+		if (employeesIds != null) {
+			data.employees = {
+				connectOrCreate: employeesIds.map((employeeId) => ({
+					where: { employeeId_skillId: { employeeId, skillId: id } },
+					create: {
+						employee: { connect: { id: employeeId, NOT: { status: false } } },
+					},
+				})),
+			};
 		}
 
 		return this.prisma.skill.update({ where: { id }, data }).catch((err) => {

@@ -5,6 +5,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeUpdateDto } from "./dto/employee-update.dto";
 import { EmployeeDto } from "./dto/employee.dto";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 @Injectable()
 export class EmployeeService {
@@ -30,17 +31,22 @@ export class EmployeeService {
 
 	async create(
 		employee: EmployeeCreateDto,
-		skills: number[],
+		skillsIds?: number[],
 	): Promise<EmployeeDto> {
-		const skillsIds = skills.map((id) => {
-			return { id, NOT: { status: false } };
-		});
-
 		const data: Prisma.EmployeeCreateInput = employee;
-		data.skills = { connect: skillsIds };
+		if (skillsIds != null) {
+			data.skills = {
+				create: skillsIds.map((id) => ({
+					skill: { connect: { id, NOT: { status: false } } },
+				})),
+			};
+		}
+
 		data.schedule = {
 			connect: { id: employee.scheduleId, NOT: { status: false } },
 		};
+		employee.scheduleId = undefined;
+
 		return this.prisma.employee.create({ data }).catch((err) => {
 			throw new BadRequestException("Error while creating employee", {
 				cause: err,
@@ -51,14 +57,18 @@ export class EmployeeService {
 	async update(
 		id: string,
 		employee: EmployeeUpdateDto,
-		skills?: number[],
+		skillsIds?: number[],
 	): Promise<EmployeeDto> {
 		const data: Prisma.EmployeeUpdateInput = employee;
-		if (skills != null) {
-			const skillsIds = skills.map((id) => {
-				return { id, NOT: { status: false } };
-			});
-			data.skills = { connect: skillsIds };
+		if (skillsIds != null) {
+			data.skills = {
+				connectOrCreate: skillsIds.map((skillId) => ({
+					where: { employeeId_skillId: { employeeId: id, skillId } },
+					create: {
+						skill: { connect: { id: skillId, NOT: { status: false } } },
+					},
+				})),
+			};
 		}
 
 		return this.prisma.employee.update({ where: { id }, data }).catch((err) => {

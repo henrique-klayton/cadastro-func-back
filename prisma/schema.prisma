@@ -24,7 +24,7 @@ model Employee {
 
   scheduleId Int
   schedule   Schedule         @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
-  skills     Skill[]
+  skills     EmployeeSkills[]
 }
 
 model Schedule {
@@ -41,5 +41,14 @@ model Skill {
   description String
   status      Boolean @default(true)
 
-  employees Employee[]
+  employees EmployeeSkills[]
+}
+
+model EmployeeSkills {
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId String
+  skill      Skill    @relation(fields: [skillId], references: [id], onDelete: Restrict)
+  skillId    Int
+
+  @@id([employeeId, skillId])
 }
