@@ -22,7 +22,11 @@ export class ScheduleResolver {
 
 	@Query(() => [ScheduleDto])
 	async scheduleList(
-		@Args() { take, skip, filterStatus }: FindWithPaginationArgs,
+		@Args() {
+			amount: take,
+			offset: skip,
+			filterStatus,
+		}: FindWithPaginationArgs,
 	): Promise<ScheduleDto[]> {
 		return this.service.findWithPagination({ take, skip }, filterStatus);
 	}

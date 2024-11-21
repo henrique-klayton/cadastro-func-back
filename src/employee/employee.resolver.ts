@@ -1,10 +1,10 @@
 import { NotFoundException } from "@nestjs/common";
 import { Args, ID, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.args";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeUpdateDto } from "./dto/employee-update.dto";
 import { EmployeeDto } from "./dto/employee.dto";
 import { EmployeeService } from "./employee.service";
-import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.args";
 
 @Resolver(() => EmployeeDto)
 export class EmployeeResolver {
@@ -22,7 +22,11 @@ export class EmployeeResolver {
 
 	@Query(() => [EmployeeDto])
 	async employeeList(
-		@Args() { take, skip, filterStatus }: FindWithPaginationArgs,
+		@Args() {
+			amount: take,
+			offset: skip,
+			filterStatus,
+		}: FindWithPaginationArgs,
 	): Promise<EmployeeDto[]> {
 		return this.service.findWithPagination({ take, skip }, filterStatus);
 	}
