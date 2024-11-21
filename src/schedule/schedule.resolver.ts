@@ -2,6 +2,7 @@ import { NotFoundException } from "@nestjs/common";
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.args";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
+import { ScheduleUpdateDto } from "./dto/schedule-update.dto";
 import { ScheduleDto } from "./dto/schedule.dto";
 import { ScheduleService } from "./schedule.service";
 
@@ -32,5 +33,25 @@ export class ScheduleResolver {
 		schedule: ScheduleCreateDto,
 	) {
 		return this.service.create(schedule);
+	}
+
+	@Mutation(() => ScheduleDto)
+	async updateSchedule(
+		@Args("id", { type: () => Int })
+		id: number,
+		@Args("schedule", { type: () => ScheduleUpdateDto })
+		schedule: ScheduleUpdateDto,
+	) {
+		return this.service.update(id, schedule);
+	}
+
+	@Mutation(() => ScheduleDto)
+	async updateScheduleStatus(
+		@Args("id", { type: () => Int })
+		id: number,
+		@Args("status", { type: () => Boolean })
+		status: boolean,
+	) {
+		return this.service.updateStatus(id, status);
 	}
 }

@@ -28,9 +28,33 @@ export class SkillResolver {
 
 	@Mutation(() => SkillDto)
 	async createSkill(
-		@Args("skill", { type: () => SkillCreateDto }) skill: SkillCreateDto,
-		@Args("employees", { type: () => [ID] }) employees: string[],
+		@Args("skill", { type: () => SkillCreateDto })
+		skill: SkillCreateDto,
+		@Args("employees", { type: () => [ID] })
+		employees: string[],
 	) {
 		return this.service.create(skill, employees);
+	}
+
+	@Mutation(() => SkillDto)
+	async updateSkill(
+		@Args("id", { type: () => Int })
+		id: number,
+		@Args("skill", { type: () => SkillUpdateDto })
+		skill: SkillUpdateDto,
+		@Args("employees", { type: () => [ID], nullable: true })
+		employees?: string[],
+	) {
+		return this.service.update(id, skill, employees);
+	}
+
+	@Mutation(() => SkillDto)
+	async updateSkillStatus(
+		@Args("id", { type: () => Int })
+		id: number,
+		@Args("status", { type: () => Boolean })
+		status: boolean,
+	) {
+		return this.service.updateStatus(id, status);
 	}
 }
