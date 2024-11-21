@@ -20,5 +20,5 @@ export class EmployeeCreateDto {
 	@IsNotEmpty()
 	scheduleId?: number;
 
-	schedule: Prisma.ScheduleCreateNestedOneWithoutEmployeeInput = { connect: { id: 0 } };
+	schedule: Prisma.ScheduleCreateNestedOneWithoutEmployeesInput = { connect: { id: 0 } };
 }

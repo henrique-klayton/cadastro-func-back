@@ -33,7 +33,7 @@ model Schedule {
   endTime   DateTime     @db.Time()
   type      ScheduleType
   status    Boolean      @default(true)
-  Employee  Employee[]
+  employees  Employee[]
 }
 
 model Skill {
