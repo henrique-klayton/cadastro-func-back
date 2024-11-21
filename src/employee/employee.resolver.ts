@@ -62,4 +62,12 @@ export class EmployeeResolver {
 	) {
 		return this.service.updateStatus(id, status);
 	}
+
+	@Mutation(() => EmployeeDto)
+	async deleteEmployee(
+		@Args("id", { type: () => ID })
+		id: string,
+	) {
+		return this.service.delete(id);
+	}
 }

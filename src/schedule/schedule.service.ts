@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
@@ -39,6 +39,14 @@ export class ScheduleService {
 		return this.prisma.schedule.update({
 			where: { id },
 			data: { status },
+		});
+	}
+
+	async delete(id: number): Promise<ScheduleDto> {
+		return this.prisma.schedule.delete({ where: { id } }).catch((err) => {
+			throw new BadRequestException("Error while deleting schedule", {
+				cause: err,
+			});
 		});
 	}
 }

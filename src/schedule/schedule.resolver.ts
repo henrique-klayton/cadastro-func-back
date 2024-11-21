@@ -58,4 +58,12 @@ export class ScheduleResolver {
 	) {
 		return this.service.updateStatus(id, status);
 	}
+
+	@Mutation(() => ScheduleDto)
+	async deleteSchedule(
+		@Args("id", { type: () => Int })
+		id: number,
+	) {
+		return this.service.delete(id);
+	}
 }
