@@ -23,7 +23,7 @@ export class ScheduleResolver {
 	@Query(() => [ScheduleDto])
 	async scheduleList(
 		@Args() {
-			amount: take,
+			limit: take,
 			offset: skip,
 			filterStatus,
 		}: FindWithPaginationArgs,

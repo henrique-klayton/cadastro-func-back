@@ -23,7 +23,7 @@ export class SkillResolver {
 	@Query(() => [SkillDto])
 	async skillList(
 		@Args() {
-			amount: take,
+			limit: take,
 			offset: skip,
 			filterStatus,
 		}: FindWithPaginationArgs,
