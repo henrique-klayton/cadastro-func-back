@@ -43,11 +43,11 @@ type SkillDto {
 
 type Query {
   employee(id: ID!): EmployeeDto!
-  employeeList(amount: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [EmployeeDto!]!
+  employeeList(limit: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [EmployeeDto!]!
   schedule(id: Int!): ScheduleDto!
-  scheduleList(amount: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [ScheduleDto!]!
+  scheduleList(limit: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [ScheduleDto!]!
   skill(id: Int!): SkillDto!
-  skillList(amount: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [SkillDto!]!
+  skillList(limit: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [SkillDto!]!
 }
 
 type Mutation {

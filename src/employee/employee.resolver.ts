@@ -23,7 +23,7 @@ export class EmployeeResolver {
 	@Query(() => [EmployeeDto])
 	async employeeList(
 		@Args() {
-			amount: take,
+			limit: take,
 			offset: skip,
 			filterStatus,
 		}: FindWithPaginationArgs,
