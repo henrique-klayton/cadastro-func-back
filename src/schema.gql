@@ -26,7 +26,7 @@ type ScheduleDto {
   status: Boolean!
 }
 
-"""Format representating time with timezone"""
+"""Format representating time with timezone in the format HH:mm:ss.sssZ"""
 scalar Time
 
 enum ScheduleType {
