@@ -1,0 +1,5 @@
+- [x] Validate active registers on create
+- [x] Delete object mutations
+- [x] Disconnect registers when deactivated?
+- [ ] Get skills on employee query when an optional argument is set to true
+- [ ] Query to get employees of a schedule
