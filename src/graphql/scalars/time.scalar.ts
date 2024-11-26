@@ -1,15 +1,19 @@
 import { GraphQLScalarType, Kind, ValueNode } from "graphql";
 
 const stringParser = (value: string): Date => {
-	return new Date(`1970-01-01T${value}`);
+	const date = new Date(`1970-01-01T${value}`);
+	if (Number.isNaN(date.getTime())) {
+		throw new Error("Invalid Time");
+	}
+	return date;
 };
 
-export const TimeScalar = new GraphQLScalarType<Date | undefined, string>({
+export const TimeScalar = new GraphQLScalarType<Date, string>({
 	name: "Time",
-	description: "Format representating time with timezone",
+	description: "Format representating time with timezone in the format HH:mm:ss.sssZ",
 
 	parseValue: (value: string) => {
-		return stringParser(`1970-01-01T${value}`);
+		return stringParser(value);
 	},
 
 	serialize: (value: Date) => {
@@ -21,6 +25,6 @@ export const TimeScalar = new GraphQLScalarType<Date | undefined, string>({
 			return stringParser(ast.value);
 		}
 
-		return undefined;
+		throw new Error("Invalid Time");
 	},
 });
