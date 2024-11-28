@@ -2,22 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type EmployeeDto {
-  id: ID!
-  firstName: String!
-  lastName: String!
-  birthDate: DateTime!
-  status: Boolean!
-  scheduleId: Int
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type ScheduleDto {
   id: Int!
   startTime: Time!
@@ -41,8 +25,38 @@ type SkillDto {
   status: Boolean!
 }
 
+type EmployeeDto {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  birthDate: DateTime!
+  status: Boolean!
+  scheduleId: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type EmployeeFullDto {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  birthDate: DateTime!
+  status: Boolean!
+  scheduleId: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  schedule: ScheduleDto!
+  skills: [SkillDto!]!
+}
+
 type Query {
   employee(id: ID!): EmployeeDto!
+  employeeWithRelations(id: ID!): EmployeeFullDto!
   employeeList(limit: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [EmployeeDto!]!
   schedule(id: Int!): ScheduleDto!
   scheduleList(limit: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): [ScheduleDto!]!

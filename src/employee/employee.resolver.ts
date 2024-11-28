@@ -2,6 +2,7 @@ import { NotFoundException } from "@nestjs/common";
 import { Args, ID, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.args";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
+import { EmployeeFullDto } from "./dto/employee-full-dto";
 import { EmployeeUpdateDto } from "./dto/employee-update.dto";
 import { EmployeeDto } from "./dto/employee.dto";
 import { EmployeeService } from "./employee.service";
@@ -12,7 +13,8 @@ export class EmployeeResolver {
 
 	@Query(() => EmployeeDto)
 	async employee(
-		@Args("id", { type: () => ID }) id: string,
+		@Args("id", { type: () => ID })
+		id: string,
 	): Promise<EmployeeDto> {
 		const employee = await this.service.find(id);
 		if (employee == null)
@@ -20,13 +22,20 @@ export class EmployeeResolver {
 		return employee;
 	}
 
+	@Query(() => EmployeeFullDto)
+	async employeeWithRelations(
+		@Args("id", { type: () => ID })
+		id: string,
+	): Promise<EmployeeFullDto> {
+		const employee = (await this.service.find(id, true)) as EmployeeFullDto;
+		if (employee == null)
+			throw new NotFoundException("Funcionário não encontrado");
+		return employee;
+	}
+
 	@Query(() => [EmployeeDto])
 	async employeeList(
-		@Args() {
-			limit: take,
-			offset: skip,
-			filterStatus,
-		}: FindWithPaginationArgs,
+		@Args() { limit: take, offset: skip, filterStatus }: FindWithPaginationArgs,
 	): Promise<EmployeeDto[]> {
 		return this.service.findWithPagination({ take, skip }, filterStatus);
 	}

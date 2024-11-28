@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
+import { EmployeeFullDto } from "./dto/employee-full-dto";
 import { EmployeeUpdateDto } from "./dto/employee-update.dto";
 import { EmployeeDto } from "./dto/employee.dto";
 
@@ -10,9 +11,20 @@ import { EmployeeDto } from "./dto/employee.dto";
 export class EmployeeService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async find(id: string): Promise<EmployeeDto | null> {
+	async find(id: string, relations: true): Promise<EmployeeFullDto | null>;
+	async find(id: string, relations?: false): Promise<EmployeeDto | null>;
+	async find(
+		id: string,
+		relations = false,
+	): Promise<EmployeeDto | EmployeeFullDto | null> {
+		const include: Prisma.EmployeeInclude = {
+			schedule: {},
+			skills: {},
+		};
+
 		return this.prisma.employee.findUnique({
 			where: { id },
+			include: relations ? include : undefined,
 		});
 	}
 
