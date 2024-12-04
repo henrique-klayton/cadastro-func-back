@@ -32,6 +32,7 @@ type EmployeeDto {
   birthDate: DateTime!
   status: Boolean!
   scheduleId: Int
+  schedule: ScheduleDto
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -48,9 +49,9 @@ type EmployeeFullDto {
   birthDate: DateTime!
   status: Boolean!
   scheduleId: Int
+  schedule: ScheduleDto!
   createdAt: DateTime!
   updatedAt: DateTime!
-  schedule: ScheduleDto!
   skills: [SkillDto!]!
 }
 
