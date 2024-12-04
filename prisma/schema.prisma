@@ -8,8 +8,8 @@ datasource db {
 }
 
 enum ScheduleType {
-  SCHEDULE_6x1
   SCHEDULE_5x2
+  SCHEDULE_6x1
   SCHEDULE_12x36
 }
 
@@ -23,7 +23,7 @@ model Employee {
   updatedAt DateTime @default(now()) @db.Timestamp()
 
   scheduleId Int?
-  schedule   Schedule?         @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
+  schedule   Schedule?        @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
   skills     EmployeeSkills[]
 }
 
@@ -33,7 +33,7 @@ model Schedule {
   endTime   DateTime     @db.Time()
   type      ScheduleType
   status    Boolean      @default(true)
-  employees  Employee[]
+  employees Employee[]
 }
 
 model Skill {
