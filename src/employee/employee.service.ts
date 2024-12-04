@@ -37,6 +37,7 @@ export class EmployeeService {
 			take,
 			skip,
 			where: { status },
+			include: { schedule: {} },
 		});
 	}
 

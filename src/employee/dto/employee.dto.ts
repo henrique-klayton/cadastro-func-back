@@ -1,4 +1,5 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
+import { ScheduleDto } from "src/schedule/dto/schedule.dto";
 
 @ObjectType()
 export class EmployeeDto {
@@ -18,7 +19,10 @@ export class EmployeeDto {
 	status: boolean;
 
 	@Field(() => Int, { nullable: true })
-	scheduleId: number | null;
+	scheduleId?: number | null;
+
+	@Field(() => ScheduleDto, { nullable: true })
+	schedule?: ScheduleDto | null;
 
 	@Field(() => Date)
 	createdAt: Date;
