@@ -19,13 +19,21 @@ export class EmployeeService {
 	): Promise<EmployeeDto | EmployeeFullDto | null> {
 		const include: Prisma.EmployeeInclude = {
 			schedule: {},
-			skills: {},
+			skills: { include: { skill: {} } },
 		};
 
-		return this.prisma.employee.findUnique({
-			where: { id },
-			include: relations ? include : undefined,
-		});
+		return this.prisma.employee
+			.findUnique({
+				where: { id },
+				include: relations ? include : undefined,
+			})
+			.then((data) => {
+				const employee = data as any;
+				if (relations) {
+					employee.skills = employee.skills.map((item) => item.skill);
+				}
+				return employee;
+			});
 	}
 
 	async findWithPagination(
