@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
@@ -44,6 +45,13 @@ export class ScheduleService {
 
 	async delete(id: number): Promise<ScheduleDto> {
 		return this.prisma.schedule.delete({ where: { id } }).catch((err) => {
+			if (err instanceof PrismaClientKnownRequestError && err.message) {
+				if (err.message.match(/constraint.*employee/gi)) {
+					throw new BadRequestException(
+						"Não pode deletar escala com funcionários ativos",
+					);
+				}
+			}
 			throw new BadRequestException("Error while deleting schedule", {
 				cause: err,
 			});
