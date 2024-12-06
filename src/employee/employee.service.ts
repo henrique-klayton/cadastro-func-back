@@ -28,6 +28,7 @@ export class EmployeeService {
 				include: relations ? include : undefined,
 			})
 			.then((data) => {
+				// biome-ignore lint/suspicious/noExplicitAny: Converting skills to expected type
 				const employee = data as any;
 				if (relations) {
 					employee.skills = employee.skills.map((item) => item.skill);
