@@ -5,7 +5,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeFullDto } from "./dto/employee-full-dto";
 import { EmployeeUpdateDto } from "./dto/employee-update.dto";
-import { EmployeeDto } from "./dto/employee.dto";
+import { EmployeeDto, PaginatedEmployeeDto } from "./dto/employee.dto";
 
 @Injectable()
 export class EmployeeService {
@@ -40,14 +40,18 @@ export class EmployeeService {
 	async findWithPagination(
 		{ take, skip }: Pagination,
 		filterStatus = true,
-	): Promise<EmployeeDto[]> {
+	): Promise<PaginatedEmployeeDto> {
 		const status = filterStatus ? true : undefined;
-		return this.prisma.employee.findMany({
-			take,
-			skip,
-			where: { status },
-			include: { schedule: {} },
-		});
+		const [count, employees] = await this.prisma.$transaction([
+			this.prisma.schedule.count(),
+			this.prisma.employee.findMany({
+				take,
+				skip,
+				where: { status },
+				include: { schedule: {} },
+			}),
+		]);
+		return { data: employees, total: count };
 	}
 
 	async create(

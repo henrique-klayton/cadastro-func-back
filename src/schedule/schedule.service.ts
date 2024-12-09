@@ -5,7 +5,7 @@ import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
 import { ScheduleUpdateDto } from "./dto/schedule-update.dto";
-import { ScheduleDto } from "./dto/schedule.dto";
+import { PaginatedScheduleDto, ScheduleDto } from "./dto/schedule.dto";
 
 @Injectable()
 export class ScheduleService {
@@ -20,13 +20,17 @@ export class ScheduleService {
 	async findWithPagination(
 		{ take, skip }: Pagination,
 		filterStatus = true,
-	): Promise<ScheduleDto[]> {
+	): Promise<PaginatedScheduleDto> {
 		const status = filterStatus ? true : undefined;
-		return this.prisma.schedule.findMany({
-			take,
-			skip,
-			where: { status },
-		});
+		const [count, schedules] = await this.prisma.$transaction([
+			this.prisma.schedule.count(),
+			this.prisma.schedule.findMany({
+				take,
+				skip,
+				where: { status },
+			}),
+		]);
+		return { data: schedules, total: count };
 	}
 
 	async create(data: ScheduleCreateDto): Promise<ScheduleDto> {

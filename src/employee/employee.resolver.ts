@@ -4,7 +4,7 @@ import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.ar
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeFullDto } from "./dto/employee-full-dto";
 import { EmployeeUpdateDto } from "./dto/employee-update.dto";
-import { EmployeeDto } from "./dto/employee.dto";
+import { EmployeeDto, PaginatedEmployeeDto } from "./dto/employee.dto";
 import { EmployeeService } from "./employee.service";
 
 @Resolver(() => EmployeeDto)
@@ -33,10 +33,10 @@ export class EmployeeResolver {
 		return employee;
 	}
 
-	@Query(() => [EmployeeDto])
+	@Query(() => PaginatedEmployeeDto)
 	async employeeList(
 		@Args() { limit: take, offset: skip, filterStatus }: FindWithPaginationArgs,
-	): Promise<EmployeeDto[]> {
+	): Promise<PaginatedEmployeeDto> {
 		return this.service.findWithPagination({ take, skip }, filterStatus);
 	}
 

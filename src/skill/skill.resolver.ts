@@ -3,7 +3,7 @@ import { Args, ID, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.args";
 import { SkillCreateDto } from "./dto/skill-create.dto";
 import { SkillUpdateDto } from "./dto/skill-update.dto";
-import { SkillDto } from "./dto/skill.dto";
+import { PaginatedSkillDto, SkillDto } from "./dto/skill.dto";
 import { SkillService } from "./skill.service";
 
 @Resolver(() => SkillDto)
@@ -20,14 +20,10 @@ export class SkillResolver {
 		return skill;
 	}
 
-	@Query(() => [SkillDto])
+	@Query(() => PaginatedSkillDto)
 	async skillList(
-		@Args() {
-			limit: take,
-			offset: skip,
-			filterStatus,
-		}: FindWithPaginationArgs,
-	): Promise<SkillDto[]> {
+		@Args() { limit: take, offset: skip, filterStatus }: FindWithPaginationArgs,
+	): Promise<PaginatedSkillDto> {
 		return this.service.findWithPagination({ take, skip }, filterStatus);
 	}
 

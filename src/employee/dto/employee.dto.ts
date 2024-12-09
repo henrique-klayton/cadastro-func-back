@@ -1,4 +1,5 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
+import { Pagination } from "src/pagination/pagination";
 import { ScheduleDto } from "src/schedule/dto/schedule.dto";
 
 @ObjectType()
@@ -30,3 +31,6 @@ export class EmployeeDto {
 	@Field(() => Date)
 	updatedAt: Date;
 }
+
+@ObjectType()
+export class PaginatedEmployeeDto extends Pagination(EmployeeDto) {}
