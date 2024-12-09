@@ -1,8 +1,8 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { SkillCreateDto } from "./skill-create.dto";
+import { Pagination } from "src/pagination/pagination";
 
 @ObjectType()
-export class SkillDto extends SkillCreateDto {
+export class SkillDto {
 	@Field(() => Int)
 	id: number;
 
@@ -12,3 +12,6 @@ export class SkillDto extends SkillCreateDto {
 	@Field(() => Boolean)
 	status: boolean;
 }
+
+@ObjectType()
+export class PaginatedSkillDto extends Pagination(SkillDto) {}

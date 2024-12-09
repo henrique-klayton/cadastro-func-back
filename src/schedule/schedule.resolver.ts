@@ -3,7 +3,7 @@ import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.args";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
 import { ScheduleUpdateDto } from "./dto/schedule-update.dto";
-import { ScheduleDto } from "./dto/schedule.dto";
+import { PaginatedScheduleDto, ScheduleDto } from "./dto/schedule.dto";
 import { ScheduleService } from "./schedule.service";
 
 @Resolver(() => ScheduleDto)
@@ -20,14 +20,10 @@ export class ScheduleResolver {
 		return schedule;
 	}
 
-	@Query(() => [ScheduleDto])
+	@Query(() => PaginatedScheduleDto)
 	async scheduleList(
-		@Args() {
-			limit: take,
-			offset: skip,
-			filterStatus,
-		}: FindWithPaginationArgs,
-	): Promise<ScheduleDto[]> {
+		@Args() { limit: take, offset: skip, filterStatus }: FindWithPaginationArgs,
+	): Promise<PaginatedScheduleDto> {
 		return this.service.findWithPagination({ take, skip }, filterStatus);
 	}
 

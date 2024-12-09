@@ -1,10 +1,10 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { ScheduleType } from "@prisma/client";
 import { TimeScalar } from "src/graphql/scalars/time.scalar";
-import { ScheduleCreateDto } from "./schedule-create.dto";
+import { Pagination } from "src/pagination/pagination";
 
 @ObjectType()
-export class ScheduleDto extends ScheduleCreateDto {
+export class ScheduleDto {
 	@Field(() => Int)
 	id: number;
 
@@ -20,3 +20,6 @@ export class ScheduleDto extends ScheduleCreateDto {
 	@Field(() => Boolean)
 	status: boolean;
 }
+
+@ObjectType()
+export class PaginatedScheduleDto extends Pagination(ScheduleDto) {}
