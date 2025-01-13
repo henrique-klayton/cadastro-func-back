@@ -4,6 +4,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
+import { ScheduleFilterDto } from "./dto/schedule-filter-dto";
 import { ScheduleUpdateDto } from "./dto/schedule-update.dto";
 import { PaginatedScheduleDto, ScheduleDto } from "./dto/schedule.dto";
 
@@ -19,15 +20,16 @@ export class ScheduleService {
 
 	async findWithPagination(
 		{ take, skip }: Pagination,
-		filterStatus = true,
+		{ status, type: typeList }: ScheduleFilterDto,
 	): Promise<PaginatedScheduleDto> {
-		const status = filterStatus ? true : undefined;
+		const hasTypes = typeList.length > 0;
+		const type = hasTypes ? { in: typeList } : undefined;
 		const [count, schedules] = await this.prisma.$transaction([
 			this.prisma.schedule.count(),
 			this.prisma.schedule.findMany({
 				take,
 				skip,
-				where: { status },
+				where: { status: status, type },
 			}),
 		]);
 		return { data: schedules, total: count };

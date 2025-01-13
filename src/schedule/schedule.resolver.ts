@@ -1,7 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { FindWithPaginationArgs } from "src/graphql/args/find-with-pagination.args";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
+import { SchedulePaginationArgs } from "./dto/schedule-filter-dto";
 import { ScheduleUpdateDto } from "./dto/schedule-update.dto";
 import { PaginatedScheduleDto, ScheduleDto } from "./dto/schedule.dto";
 import { ScheduleService } from "./schedule.service";
@@ -22,9 +22,9 @@ export class ScheduleResolver {
 
 	@Query(() => PaginatedScheduleDto)
 	async scheduleList(
-		@Args() { limit: take, offset: skip, filterStatus }: FindWithPaginationArgs,
+		@Args() { limit: take, offset: skip, filter }: SchedulePaginationArgs,
 	): Promise<PaginatedScheduleDto> {
-		return this.service.findWithPagination({ take, skip }, filterStatus);
+		return this.service.findWithPagination({ take, skip }, filter);
 	}
 
 	@Mutation(() => ScheduleDto)

@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { ScheduleType } from "@prisma/client";
 import { TimeScalar } from "src/graphql/scalars/time.scalar";
-import { Pagination } from "src/pagination/pagination";
+import Pagination from "src/pagination/pagination";
 
 @ObjectType()
 export class ScheduleDto {

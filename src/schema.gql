@@ -73,11 +73,25 @@ type EmployeeFullDto {
 type Query {
   employee(id: ID!): EmployeeDto!
   employeeWithRelations(id: ID!): EmployeeFullDto!
-  employeeList(limit: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): PaginatedEmployeeDto!
+  employeeList(limit: Int! = 10, offset: Int! = 0, filter: EmployeeFilterDto!): PaginatedEmployeeDto!
   schedule(id: Int!): ScheduleDto!
-  scheduleList(limit: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): PaginatedScheduleDto!
+  scheduleList(limit: Int! = 10, offset: Int! = 0, filter: ScheduleFilterDto!): PaginatedScheduleDto!
   skill(id: Int!): SkillDto!
-  skillList(limit: Int! = 10, offset: Int! = 0, filterStatus: Boolean! = true): PaginatedSkillDto!
+  skillList(limit: Int! = 10, offset: Int! = 0, filter: SkillFilterDto!): PaginatedSkillDto!
+}
+
+input EmployeeFilterDto {
+  status: Boolean! = true
+  scheduleId: [Int!]! = []
+}
+
+input ScheduleFilterDto {
+  type: [ScheduleType!]! = []
+  status: Boolean! = true
+}
+
+input SkillFilterDto {
+  status: Boolean! = true
 }
 
 type Mutation {

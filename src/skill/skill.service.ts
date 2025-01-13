@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { SkillCreateDto } from "./dto/skill-create.dto";
+import { SkillFilterDto } from "./dto/skill-filter-dto";
 import { SkillUpdateDto } from "./dto/skill-update.dto";
 import { PaginatedSkillDto, SkillDto } from "./dto/skill.dto";
 
@@ -18,15 +19,14 @@ export class SkillService {
 
 	async findWithPagination(
 		{ take, skip }: Pagination,
-		filterStatus = true,
+		{ status }: SkillFilterDto,
 	): Promise<PaginatedSkillDto> {
-		const status = filterStatus ? true : undefined;
 		const [count, skills] = await this.prisma.$transaction([
 			this.prisma.schedule.count(),
 			this.prisma.skill.findMany({
 				take,
 				skip,
-				where: { status },
+				where: { status: status },
 			}),
 		]);
 		return { data: skills, total: count };

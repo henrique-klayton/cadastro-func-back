@@ -1,7 +1,7 @@
 import { Type } from "@nestjs/common";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 
-export function Pagination<T>(classRef: Type<T>) {
+export default function Pagination<T>(classRef: Type<T>) {
 	@ObjectType({ isAbstract: true })
 	abstract class PaginatedType<T> {
 		@Field(() => [classRef])

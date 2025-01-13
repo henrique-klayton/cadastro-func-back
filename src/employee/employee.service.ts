@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { Pagination } from "src/graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
+import { EmployeeFilterDto } from "./dto/employee-filter-dto";
 import { EmployeeFullDto } from "./dto/employee-full-dto";
 import { EmployeeUpdateDto } from "./dto/employee-update.dto";
 import { EmployeeDto, PaginatedEmployeeDto } from "./dto/employee.dto";
@@ -39,15 +40,19 @@ export class EmployeeService {
 
 	async findWithPagination(
 		{ take, skip }: Pagination,
-		filterStatus = true,
+		{ status, scheduleId: scheduleIdList }: EmployeeFilterDto,
 	): Promise<PaginatedEmployeeDto> {
-		const status = filterStatus ? true : undefined;
+		const hasIds = scheduleIdList.length > 0;
+		const schedule = hasIds ? { id: { in: scheduleIdList } } : undefined;
 		const [count, employees] = await this.prisma.$transaction([
 			this.prisma.schedule.count(),
 			this.prisma.employee.findMany({
 				take,
 				skip,
-				where: { status },
+				where: {
+					status: status,
+					schedule,
+				},
 				include: { schedule: {} },
 			}),
 		]);
