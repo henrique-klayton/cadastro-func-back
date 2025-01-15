@@ -26,7 +26,7 @@ export class SkillService {
 			this.prisma.skill.findMany({
 				take,
 				skip,
-				where: { status: status },
+				where: { status: status ?? undefined },
 			}),
 		]);
 		return { data: skills, total: count };

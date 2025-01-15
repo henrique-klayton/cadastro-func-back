@@ -7,8 +7,8 @@ export class ScheduleFilterDto {
 	@Field(() => [ScheduleType], { defaultValue: [] })
 	type: ScheduleType[];
 
-	@Field(() => Boolean, { defaultValue: true })
-	status: boolean;
+	@Field(() => Boolean, { nullable: true })
+	status: boolean | null | undefined;
 }
 
 @ArgsType()

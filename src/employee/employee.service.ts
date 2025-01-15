@@ -50,7 +50,7 @@ export class EmployeeService {
 				take,
 				skip,
 				where: {
-					status: status,
+					status: status ?? undefined,
 					schedule,
 				},
 				include: { schedule: {} },

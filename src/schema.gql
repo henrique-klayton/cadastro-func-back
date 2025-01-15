@@ -81,17 +81,17 @@ type Query {
 }
 
 input EmployeeFilterDto {
-  status: Boolean! = true
   scheduleId: [Int!]! = []
+  status: Boolean
 }
 
 input ScheduleFilterDto {
   type: [ScheduleType!]! = []
-  status: Boolean! = true
+  status: Boolean
 }
 
 input SkillFilterDto {
-  status: Boolean! = true
+  status: Boolean
 }
 
 type Mutation {

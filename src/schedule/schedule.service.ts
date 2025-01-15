@@ -29,7 +29,7 @@ export class ScheduleService {
 			this.prisma.schedule.findMany({
 				take,
 				skip,
-				where: { status: status, type },
+				where: { status: status ?? undefined, type },
 			}),
 		]);
 		return { data: schedules, total: count };
