@@ -22,7 +22,7 @@ export class SkillService {
 		{ status }: SkillFilterDto,
 	): Promise<PaginatedSkillDto> {
 		const [count, skills] = await this.prisma.$transaction([
-			this.prisma.schedule.count(),
+			this.prisma.skill.count(),
 			this.prisma.skill.findMany({
 				take,
 				skip,

@@ -45,7 +45,7 @@ export class EmployeeService {
 		const hasIds = scheduleIdList.length > 0;
 		const schedule = hasIds ? { id: { in: scheduleIdList } } : undefined;
 		const [count, employees] = await this.prisma.$transaction([
-			this.prisma.schedule.count(),
+			this.prisma.employee.count(),
 			this.prisma.employee.findMany({
 				take,
 				skip,
