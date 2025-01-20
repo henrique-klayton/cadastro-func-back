@@ -1,6 +1,6 @@
+import { TimeScalar } from "@graphql/scalars/time.scalar";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { ScheduleType } from "@prisma/client";
-import { TimeScalar } from "src/graphql/scalars/time.scalar";
 import Pagination from "src/pagination/pagination";
 
 @ObjectType()

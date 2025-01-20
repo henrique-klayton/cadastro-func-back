@@ -1,5 +1,5 @@
+import PaginationArgs from "@graphql/args/pagination-args";
 import { ArgsType, Field, InputType, Int } from "@nestjs/graphql";
-import PaginationArgs from "src/graphql/args/pagination-args";
 
 @InputType()
 export class EmployeeFilterDto {

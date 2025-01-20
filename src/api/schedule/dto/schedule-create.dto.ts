@@ -1,6 +1,6 @@
+import { TimeScalar } from "@graphql/scalars/time.scalar";
 import { Field, InputType } from "@nestjs/graphql";
 import { ScheduleType } from "@prisma/client";
-import { TimeScalar } from "src/graphql/scalars/time.scalar";
 
 @InputType()
 export class ScheduleCreateDto {
