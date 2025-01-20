@@ -1,5 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Args, ID, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+
+import ErrorCodes from "@enums/error-codes";
 import { SkillCreateDto } from "./dto/skill-create.dto";
 import { SkillPaginationArgs } from "./dto/skill-filter-dto";
 import { SkillUpdateDto } from "./dto/skill-update.dto";
@@ -16,7 +18,7 @@ export class SkillResolver {
 		id: number,
 	): Promise<SkillDto> {
 		const skill = await this.service.find(id);
-		if (skill == null) throw new NotFoundException("Habilidade não encontrada");
+		if (skill == null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
 		return skill;
 	}
 

@@ -1,6 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { Pagination } from "src/graphql/interfaces/pagination.interface";
+
+import ErrorCodes from "@enums/error-codes";
+import { Pagination } from "@graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { SkillCreateDto } from "./dto/skill-create.dto";
 import { SkillFilterDto } from "./dto/skill-filter-dto";
@@ -46,7 +48,7 @@ export class SkillService {
 		}
 
 		return this.prisma.skill.create({ data }).catch((err) => {
-			throw new BadRequestException("Error while creating skill", {
+			throw new InternalServerErrorException(ErrorCodes.CREATE_ERROR, {
 				cause: err,
 			});
 		});
@@ -78,7 +80,7 @@ export class SkillService {
 		}
 
 		return this.prisma.skill.update({ where: { id }, data }).catch((err) => {
-			throw new BadRequestException("Error while updating skill", {
+			throw new InternalServerErrorException(ErrorCodes.UPDATE_ERROR, {
 				cause: err,
 			});
 		});
@@ -86,7 +88,7 @@ export class SkillService {
 
 	async delete(id: number): Promise<SkillDto> {
 		return this.prisma.skill.delete({ where: { id } }).catch((err) => {
-			throw new BadRequestException("Error while deleting skill", {
+			throw new InternalServerErrorException(ErrorCodes.DELETE_ERROR, {
 				cause: err,
 			});
 		});

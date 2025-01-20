@@ -1,5 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Args, ID, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+
+import ErrorCodes from "@enums/error-codes";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeePaginationArgs } from "./dto/employee-filter-dto";
 import { EmployeeFullDto } from "./dto/employee-full-dto";
@@ -17,8 +19,7 @@ export class EmployeeResolver {
 		id: string,
 	): Promise<EmployeeDto> {
 		const employee = await this.service.find(id);
-		if (employee == null)
-			throw new NotFoundException("Funcionário não encontrado");
+		if (employee == null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
 		return employee;
 	}
 
@@ -28,8 +29,7 @@ export class EmployeeResolver {
 		id: string,
 	): Promise<EmployeeFullDto> {
 		const employee = (await this.service.find(id, true)) as EmployeeFullDto;
-		if (employee == null)
-			throw new NotFoundException("Funcionário não encontrado");
+		if (employee == null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
 		return employee;
 	}
 

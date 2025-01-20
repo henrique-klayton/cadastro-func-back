@@ -1,7 +1,13 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+} from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { Pagination } from "src/graphql/interfaces/pagination.interface";
+
+import ErrorCodes from "@enums/error-codes";
+import { Pagination } from "@graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
 import { ScheduleFilterDto } from "./dto/schedule-filter-dto";
@@ -43,7 +49,7 @@ export class ScheduleService {
 		const where: Prisma.ScheduleWhereUniqueInput = { id };
 		if (!data.status) where.employees = { none: { status: true } };
 		return this.prisma.schedule.update({ where, data }).catch((err) => {
-			throw new BadRequestException("Error while updating schedule", {
+			throw new InternalServerErrorException(ErrorCodes.UPDATE_ERROR, {
 				cause: err,
 			});
 		});
@@ -53,12 +59,10 @@ export class ScheduleService {
 		return this.prisma.schedule.delete({ where: { id } }).catch((err) => {
 			if (err instanceof PrismaClientKnownRequestError && err.message) {
 				if (err.message.match(/constraint.*employee/gi)) {
-					throw new BadRequestException(
-						"Não pode deletar escala com funcionários ativos",
-					);
+					throw new BadRequestException(ErrorCodes.ACTIVE_RELATIONS);
 				}
 			}
-			throw new BadRequestException("Error while deleting schedule", {
+			throw new InternalServerErrorException(ErrorCodes.DELETE_ERROR, {
 				cause: err,
 			});
 		});

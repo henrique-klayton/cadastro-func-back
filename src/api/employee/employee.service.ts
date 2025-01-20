@@ -1,6 +1,12 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+} from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { Pagination } from "src/graphql/interfaces/pagination.interface";
+
+import ErrorCodes from "@enums/error-codes";
+import { Pagination } from "@graphql/interfaces/pagination.interface";
 import { PrismaService } from "src/prisma/prisma.service";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeFilterDto } from "./dto/employee-filter-dto";
@@ -66,9 +72,7 @@ export class EmployeeService {
 		const data: Prisma.EmployeeCreateInput = employee;
 		if (skillsIds != null) {
 			if (!employee.status) {
-				throw new BadRequestException(
-					"Cannot create inactive employee with skills",
-				);
+				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER);
 			}
 			data.skills = {
 				create: skillsIds.map((id) => ({
@@ -79,9 +83,7 @@ export class EmployeeService {
 
 		if (employee.scheduleId != null) {
 			if (!employee.status) {
-				throw new BadRequestException(
-					"Cannot create inactive employee with schedule",
-				);
+				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER);
 			}
 			data.schedule = {
 				connect: { id: employee.scheduleId, NOT: { status: false } },
@@ -90,7 +92,7 @@ export class EmployeeService {
 		employee.scheduleId = undefined;
 
 		return this.prisma.employee.create({ data }).catch((err) => {
-			throw new BadRequestException("Error while creating employee", {
+			throw new InternalServerErrorException(ErrorCodes.CREATE_ERROR, {
 				cause: err,
 			});
 		});
@@ -131,7 +133,7 @@ export class EmployeeService {
 		}
 
 		return this.prisma.employee.update({ where: { id }, data }).catch((err) => {
-			throw new BadRequestException("Error while updating employee", {
+			throw new InternalServerErrorException(ErrorCodes.UPDATE_ERROR, {
 				cause: err,
 			});
 		});
@@ -139,7 +141,7 @@ export class EmployeeService {
 
 	async delete(id: string): Promise<EmployeeDto> {
 		return this.prisma.employee.delete({ where: { id } }).catch((err) => {
-			throw new BadRequestException("Error while deleting employee", {
+			throw new InternalServerErrorException(ErrorCodes.DELETE_ERROR, {
 				cause: err,
 			});
 		});

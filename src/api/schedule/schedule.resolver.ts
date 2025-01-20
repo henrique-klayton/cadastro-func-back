@@ -1,5 +1,7 @@
 import { NotFoundException } from "@nestjs/common";
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+
+import ErrorCodes from "@enums/error-codes";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
 import { SchedulePaginationArgs } from "./dto/schedule-filter-dto";
 import { ScheduleUpdateDto } from "./dto/schedule-update.dto";
@@ -16,7 +18,7 @@ export class ScheduleResolver {
 		id: number,
 	): Promise<ScheduleDto> {
 		const schedule = await this.service.find(id);
-		if (schedule == null) throw new NotFoundException("Escala não encontrada");
+		if (schedule == null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
 		return schedule;
 	}
 
