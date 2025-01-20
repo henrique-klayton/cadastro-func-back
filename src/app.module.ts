@@ -3,13 +3,13 @@ import path from "node:path";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
+import { EmployeeModule } from "./api/employee/employee.module";
+import { ScheduleModule } from "./api/schedule/schedule.module";
+import { SkillModule } from "./api/skill/skill.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { EmployeeModule } from "./employee/employee.module";
 import { TimeScalar } from "./graphql/scalars/time.scalar";
 import { PrismaModule } from "./prisma/prisma.module";
-import { ScheduleModule } from "./schedule/schedule.module";
-import { SkillModule } from "./skill/skill.module";
 
 @Module({
 	imports: [

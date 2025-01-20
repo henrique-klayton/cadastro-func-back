@@ -1,6 +1,6 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
+import { ScheduleDto } from "src/api/schedule/dto/schedule.dto";
 import Pagination from "src/pagination/pagination";
-import { ScheduleDto } from "src/schedule/dto/schedule.dto";
 
 @ObjectType()
 export class EmployeeDto {
