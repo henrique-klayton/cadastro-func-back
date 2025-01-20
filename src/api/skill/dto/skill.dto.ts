@@ -6,10 +6,10 @@ export class SkillDto {
 	@Field(() => Int)
 	id: number;
 
-	@Field(() => String)
+	@Field()
 	description: string;
 
-	@Field(() => Boolean)
+	@Field()
 	status: boolean;
 }
 

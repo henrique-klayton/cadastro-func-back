@@ -3,13 +3,13 @@ import { Prisma } from "@prisma/client";
 
 @InputType()
 export class EmployeeCreateDto {
-	@Field(() => String)
+	@Field()
 	firstName: string;
 
-	@Field(() => String)
+	@Field()
 	lastName: string;
 
-	@Field(() => Date)
+	@Field()
 	birthDate: Date;
 
 	@Field(() => Boolean, { defaultValue: true })

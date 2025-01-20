@@ -17,7 +17,7 @@ export class ScheduleDto {
 	@Field(() => ScheduleType)
 	type: ScheduleType;
 
-	@Field(() => Boolean)
+	@Field()
 	status: boolean;
 }
 

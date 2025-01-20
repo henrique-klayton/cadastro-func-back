@@ -10,7 +10,6 @@ export class ScheduleCreateDto {
 	@Field(() => TimeScalar)
 	endTime: Date;
 
-	// TODO Type enum
 	@Field(() => ScheduleType)
 	type: ScheduleType;
 

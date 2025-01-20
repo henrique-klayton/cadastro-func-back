@@ -1,11 +1,12 @@
 import { NotFoundException } from "@nestjs/common";
-import { Args, ID, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import ErrorCodes from "@enums/error-codes";
-import { EmployeeCreateDto } from "./dto/employee-create.dto";
+import StringIdArgs from "@graphql/args/string-id-args";
+import CreateEmployeeArgs from "./args/create-employee-args";
+import UpdateEmployeeArgs from "./args/update-employee-args";
 import { EmployeePaginationArgs } from "./dto/employee-filter-dto";
 import { EmployeeFullDto } from "./dto/employee-full-dto";
-import { EmployeeUpdateDto } from "./dto/employee-update.dto";
 import { EmployeeDto, PaginatedEmployeeDto } from "./dto/employee.dto";
 import { EmployeeService } from "./employee.service";
 
@@ -14,10 +15,7 @@ export class EmployeeResolver {
 	constructor(private readonly service: EmployeeService) {}
 
 	@Query(() => EmployeeDto)
-	async employee(
-		@Args("id", { type: () => ID })
-		id: string,
-	): Promise<EmployeeDto> {
+	async employee(@Args() { id }: StringIdArgs): Promise<EmployeeDto> {
 		const employee = await this.service.find(id);
 		if (employee == null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
 		return employee;
@@ -25,10 +23,9 @@ export class EmployeeResolver {
 
 	@Query(() => EmployeeFullDto)
 	async employeeWithRelations(
-		@Args("id", { type: () => ID })
-		id: string,
+		@Args() { id }: StringIdArgs,
 	): Promise<EmployeeFullDto> {
-		const employee = (await this.service.find(id, true)) as EmployeeFullDto;
+		const employee = await this.service.find(id, true);
 		if (employee == null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
 		return employee;
 	}
@@ -41,42 +38,25 @@ export class EmployeeResolver {
 	}
 
 	@Mutation(() => EmployeeDto)
-	async createEmployee(
-		@Args("employee", { type: () => EmployeeCreateDto })
-		employee: EmployeeCreateDto,
-		@Args("skills", { type: () => [Int], nullable: true })
-		skills?: number[],
-	) {
+	async createEmployee(@Args() { employee, skills }: CreateEmployeeArgs) {
 		return this.service.create(employee, skills);
 	}
 
 	@Mutation(() => EmployeeDto)
-	async updateEmployee(
-		@Args("id", { type: () => ID })
-		id: string,
-		@Args("employee", { type: () => EmployeeUpdateDto })
-		employee: EmployeeUpdateDto,
-		@Args("skills", { type: () => [Int], nullable: true })
-		skills?: number[],
-	) {
+	async updateEmployee(@Args() { id, employee, skills }: UpdateEmployeeArgs) {
 		return this.service.update(id, employee, skills);
 	}
 
 	@Mutation(() => EmployeeDto)
 	async updateEmployeeStatus(
-		@Args("id", { type: () => ID })
-		id: string,
-		@Args("status", { type: () => Boolean })
-		status: boolean,
+		@Args() { id }: StringIdArgs,
+		@Args("status") status: boolean,
 	) {
 		return this.service.update(id, { status });
 	}
 
 	@Mutation(() => EmployeeDto)
-	async deleteEmployee(
-		@Args("id", { type: () => ID })
-		id: string,
-	) {
+	async deleteEmployee(@Args() { id }: StringIdArgs) {
 		return this.service.delete(id);
 	}
 }

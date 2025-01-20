@@ -7,16 +7,16 @@ export class EmployeeDto {
 	@Field(() => ID)
 	id: string;
 
-	@Field(() => String)
+	@Field()
 	firstName: string;
 
-	@Field(() => String)
+	@Field()
 	lastName: string;
 
-	@Field(() => Date)
+	@Field()
 	birthDate: Date;
 
-	@Field(() => Boolean)
+	@Field()
 	status: boolean;
 
 	@Field(() => Int, { nullable: true })
@@ -25,10 +25,10 @@ export class EmployeeDto {
 	@Field(() => ScheduleDto, { nullable: true })
 	schedule?: ScheduleDto | null;
 
-	@Field(() => Date)
+	@Field()
 	createdAt: Date;
 
-	@Field(() => Date)
+	@Field()
 	updatedAt: Date;
 }
 

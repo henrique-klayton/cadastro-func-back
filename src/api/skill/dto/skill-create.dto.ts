@@ -2,7 +2,7 @@ import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
 export class SkillCreateDto {
-	@Field(() => String)
+	@Field()
 	description: string;
 
 	@Field(() => Boolean, { defaultValue: true })

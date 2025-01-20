@@ -5,7 +5,7 @@ import { EmployeeDto } from "./employee.dto";
 
 @ObjectType()
 export class EmployeeFullDto extends EmployeeDto {
-	@Field(() => ScheduleDto)
+	@Field()
 	schedule: ScheduleDto;
 
 	@Field(() => [SkillDto])
