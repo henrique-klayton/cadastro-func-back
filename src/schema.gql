@@ -70,6 +70,17 @@ type EmployeeFullDto {
   skills: [SkillDto!]!
 }
 
+enum ErrorCodes {
+  ERROR
+  READ_ERROR
+  CREATE_ERROR
+  UPDATE_ERROR
+  DELETE_ERROR
+  INACTIVE_REGISTER
+  ACTIVE_RELATIONS
+  NOT_FOUND
+}
+
 type Query {
   employee(id: ID!): EmployeeDto!
   employeeWithRelations(id: ID!): EmployeeFullDto!

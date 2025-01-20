@@ -3,6 +3,8 @@ import path from "node:path";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule } from "@nestjs/graphql";
+
+import ErrorCodes from "@enums/error-codes";
 import { EmployeeModule } from "./api/employee/employee.module";
 import { ScheduleModule } from "./api/schedule/schedule.module";
 import { SkillModule } from "./api/skill/skill.module";
@@ -17,6 +19,9 @@ import { PrismaModule } from "./prisma/prisma.module";
 			driver: ApolloDriver,
 			autoSchemaFile: path.join(process.cwd(), "src/schema.gql"),
 			resolvers: { Time: TimeScalar },
+			buildSchemaOptions: {
+				orphanedTypes: [ErrorCodes],
+			},
 		}),
 		PrismaModule,
 		EmployeeModule,
