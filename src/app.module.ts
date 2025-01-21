@@ -22,6 +22,7 @@ import { PrismaModule } from "./prisma/prisma.module";
 			buildSchemaOptions: {
 				orphanedTypes: [ErrorCodes],
 			},
+			status400ForVariableCoercionErrors: true,
 		}),
 		PrismaModule,
 		EmployeeModule,
