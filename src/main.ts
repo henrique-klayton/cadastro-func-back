@@ -6,7 +6,8 @@ import { GraphqlInterceptor } from "./graphql/graphql.interceptor";
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.useGlobalPipes(new ValidationPipe());
-	app.useGlobalInterceptors(new GraphqlInterceptor());
+	if (process.env.NODE_ENV === "development")
+		app.useGlobalInterceptors(new GraphqlInterceptor());
 	await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

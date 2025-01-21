@@ -12,32 +12,30 @@ import { Observable, tap } from "rxjs";
 export class GraphqlInterceptor implements NestInterceptor {
 	intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
 		return next.handle().pipe(
-			tap((val: unknown) => {
-				// TODO Enable only in dev mode
+			tap((res: unknown) => {
 				if (context.getType<GqlContextType>() === "graphql") {
+					// Request Info
+					console.log("REQUEST INFO");
 					const ctx = GqlExecutionContext.create(context);
-					console.log(val, val?.constructor.name);
-					const res = ctx.getContext().res;
-					if (res != null) {
-						console.log(res);
-					}
 					const info: GraphQLResolveInfo = ctx.getInfo();
-					const fragments = info.fragments;
-					console.log(info.path); // Query/Mutation/Susbcription name and type
-					console.log(info.rootValue); // undefined?
-					console.log(info.parentType.name); // Is Query/Mutation/Susbcription
-					console.log(info.fieldName);
-					console.log(info.fieldNodes);
+					console.log(`Request Type: ${info.parentType.name}`); // Query/Mutation/Susbcription
+					console.log(`Path name: ${info.fieldName}`); // Path name
+
 					if (info.returnType instanceof GraphQLNonNull) {
 						const ofType = info.returnType.ofType;
 						if (!(ofType instanceof GraphQLList)) {
-							console.log(ofType.name);
+							console.log(`Args Type: ${ofType.name}`); // Request InputType name
+							console.log("Args Value:", info.variableValues); // Request input values
 							if (ofType.name.startsWith("Paginated")) {
-								console.log(JSON.stringify(info.variableValues)); // Request Input
-								// console.log(ofType); // Output Values?
+								// Pagination related
 							}
 						}
 					}
+
+					// Response Info
+					console.log("\n\nRESPONSE INFO");
+					console.log(`Response ${res?.constructor.name}:`);
+					console.log(res); // Result value
 				}
 			}),
 		);
