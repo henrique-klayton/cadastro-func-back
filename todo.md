@@ -2,7 +2,7 @@
 - [x] Delete object mutations
 - [x] Disconnect registers when deactivated?
 - [x] Add filtering to pagination
-- [ ] Get skills on employee query when an optional argument is set to true
+- [x] Get skills on employee query when an optional argument is set to true
 - [ ] Query to get employees of a schedule
 - [ ] Add validation to all classes
 - [ ] Return correct count on findWithPagination functions (use array length)
