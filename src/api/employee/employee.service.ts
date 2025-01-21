@@ -3,7 +3,7 @@ import {
 	Injectable,
 	InternalServerErrorException,
 } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { Employee, Prisma, Schedule, Skill } from "@prisma/client";
 
 import ErrorCodes from "@enums/error-codes";
 import { Pagination } from "@graphql/interfaces/pagination.interface";
@@ -29,18 +29,32 @@ export class EmployeeService {
 			skills: { include: { skill: {} } },
 		};
 
+		type EmployeeWithIncludes = Employee & {
+			schedule: Schedule;
+			skills: { skill: Skill }[];
+		};
+
+		const isFullEmployee = (
+			val: Employee | EmployeeWithIncludes,
+		): val is EmployeeWithIncludes => {
+			const data = val as EmployeeWithIncludes;
+			return data.schedule != null && data.skills != null;
+		};
+
 		return this.prisma.employee
 			.findUnique({
 				where: { id },
 				include: relations ? include : undefined,
 			})
-			.then((data) => {
-				// biome-ignore lint/suspicious/noExplicitAny: Converting skills to expected type
-				const employee = data as any;
-				if (relations) {
-					employee.skills = employee.skills.map((item) => item.skill);
+			.then((data: Employee | EmployeeWithIncludes | null) => {
+				if (data == null) return data;
+				if (isFullEmployee(data)) {
+					return {
+						...data,
+						skills: data.skills.map((item) => item.skill),
+					} satisfies EmployeeFullDto;
 				}
-				return employee;
+				return data;
 			});
 	}
 
