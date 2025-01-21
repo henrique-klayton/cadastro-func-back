@@ -18,7 +18,7 @@ import { PaginatedScheduleDto, ScheduleDto } from "./dto/schedule.dto";
 export class ScheduleService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async find(id: number): Promise<ScheduleDto | null> {
+	async findById(id: number): Promise<ScheduleDto | null> {
 		return this.prisma.schedule.findUnique({
 			where: { id },
 		});

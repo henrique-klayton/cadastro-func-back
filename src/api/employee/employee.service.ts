@@ -18,9 +18,9 @@ import { EmployeeDto, PaginatedEmployeeDto } from "./dto/employee.dto";
 export class EmployeeService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async find(id: string, relations: true): Promise<EmployeeFullDto | null>;
-	async find(id: string, relations?: false): Promise<EmployeeDto | null>;
-	async find(
+	async findById(id: string, relations: true): Promise<EmployeeFullDto | null>;
+	async findById(id: string, relations?: false): Promise<EmployeeDto | null>;
+	async findById(
 		id: string,
 		relations = false,
 	): Promise<EmployeeDto | EmployeeFullDto | null> {

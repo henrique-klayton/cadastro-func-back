@@ -15,7 +15,7 @@ export class SkillResolver {
 
 	@Query(() => SkillDto)
 	async skill(@Args() { id }: IntIdArgs): Promise<SkillDto> {
-		const skill = await this.service.find(id);
+		const skill = await this.service.findById(id);
 		if (skill == null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
 		return skill;
 	}

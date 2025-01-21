@@ -13,7 +13,7 @@ import { PaginatedSkillDto, SkillDto } from "./dto/skill.dto";
 export class SkillService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async find(id: number): Promise<SkillDto | null> {
+	async findById(id: number): Promise<SkillDto | null> {
 		return this.prisma.skill.findUnique({
 			where: { id },
 		});

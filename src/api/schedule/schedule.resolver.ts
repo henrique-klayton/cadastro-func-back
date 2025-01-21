@@ -15,7 +15,7 @@ export class ScheduleResolver {
 
 	@Query(() => ScheduleDto)
 	async schedule(@Args() { id }: IntIdArgs): Promise<ScheduleDto> {
-		const schedule = await this.service.find(id);
+		const schedule = await this.service.findById(id);
 		if (schedule == null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
 		return schedule;
 	}
