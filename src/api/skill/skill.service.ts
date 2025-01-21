@@ -23,12 +23,13 @@ export class SkillService {
 		{ take, skip }: Pagination,
 		{ status }: SkillFilterDto,
 	): Promise<PaginatedSkillDto> {
+		const where = { status: status ?? undefined };
 		const [count, skills] = await this.prisma.$transaction([
-			this.prisma.skill.count(),
+			this.prisma.skill.count({ where }),
 			this.prisma.skill.findMany({
 				take,
 				skip,
-				where: { status: status ?? undefined },
+				where,
 			}),
 		]);
 		return { data: skills, total: count };

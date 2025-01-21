@@ -30,12 +30,13 @@ export class ScheduleService {
 	): Promise<PaginatedScheduleDto> {
 		const hasTypes = typeList.length > 0;
 		const type = hasTypes ? { in: typeList } : undefined;
+		const where = { status: status ?? undefined, type };
 		const [count, schedules] = await this.prisma.$transaction([
-			this.prisma.schedule.count(),
+			this.prisma.schedule.count({ where }),
 			this.prisma.schedule.findMany({
 				take,
 				skip,
-				where: { status: status ?? undefined, type },
+				where,
 			}),
 		]);
 		return { data: schedules, total: count };

@@ -64,15 +64,16 @@ export class EmployeeService {
 	): Promise<PaginatedEmployeeDto> {
 		const hasIds = scheduleIdList.length > 0;
 		const schedule = hasIds ? { id: { in: scheduleIdList } } : undefined;
+		const where = {
+			status: status ?? undefined,
+			schedule,
+		};
 		const [count, employees] = await this.prisma.$transaction([
-			this.prisma.employee.count(),
+			this.prisma.employee.count({ where }),
 			this.prisma.employee.findMany({
 				take,
 				skip,
-				where: {
-					status: status ?? undefined,
-					schedule,
-				},
+				where,
 				include: { schedule: {} },
 			}),
 		]);
