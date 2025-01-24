@@ -60,7 +60,7 @@ export class ScheduleService {
 		return this.prisma.schedule.delete({ where: { id } }).catch((err) => {
 			if (err instanceof PrismaClientKnownRequestError && err.message) {
 				if (err.message.match(/constraint.*employee/gi)) {
-					throw new BadRequestException(ErrorCodes.ACTIVE_RELATIONS);
+					throw new BadRequestException(ErrorCodes.HAS_ACTIVE_RELATIONS);
 				}
 			}
 			throw new InternalServerErrorException(ErrorCodes.DELETE_ERROR, {

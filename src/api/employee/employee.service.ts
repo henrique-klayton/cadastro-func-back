@@ -87,7 +87,7 @@ export class EmployeeService {
 		const data: Prisma.EmployeeCreateInput = employee;
 		if (skillsIds != null) {
 			if (!employee.status) {
-				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER);
+				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER_RELATIONS);
 			}
 			data.skills = {
 				create: skillsIds.map((id) => ({
@@ -98,7 +98,7 @@ export class EmployeeService {
 
 		if (employee.scheduleId != null) {
 			if (!employee.status) {
-				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER);
+				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER_RELATIONS);
 			}
 			data.schedule = {
 				connect: { id: employee.scheduleId, NOT: { status: false } },
