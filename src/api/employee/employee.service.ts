@@ -2,11 +2,13 @@ import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
+	NotFoundException,
 } from "@nestjs/common";
 import { Employee, Prisma, Schedule, Skill } from "@prisma/client";
 
 import ErrorCodes from "@enums/error-codes";
 import { Pagination } from "@graphql/interfaces/pagination.interface";
+import { PrismaClientKnownRequestError as PrismaKnownError } from "@prisma/client/runtime/library";
 import { PrismaService } from "src/prisma/prisma.service";
 import { EmployeeCreateDto } from "./dto/employee-create.dto";
 import { EmployeeFilterDto } from "./dto/employee-filter-dto";
@@ -88,11 +90,7 @@ export class EmployeeService {
 		this.validateEmployeeSchedule(employee, data);
 		this.validateEmployeeSkills(employee, skillsIds, data);
 
-		return this.prisma.employee.create({ data }).catch((err) => {
-			throw new InternalServerErrorException(ErrorCodes.CREATE_ERROR, {
-				cause: err,
-			});
-		});
+		return this.prisma.employee.create({ data }).catch(this.treatPrismaErrors);
 	}
 
 	async update(
@@ -106,11 +104,9 @@ export class EmployeeService {
 		this.validateEmployeeSchedule(employee, data, current);
 		this.validateEmployeeSkills(employee, skillsIds, data, current);
 
-		return this.prisma.employee.update({ where: { id }, data }).catch((err) => {
-			throw new InternalServerErrorException(ErrorCodes.UPDATE_ERROR, {
-				cause: err,
-			});
-		});
+		return this.prisma.employee
+			.update({ where: { id }, data })
+			.catch(this.treatPrismaErrors);
 	}
 
 	async delete(id: string): Promise<EmployeeDto> {
@@ -190,5 +186,25 @@ export class EmployeeService {
 				}),
 			};
 		}
+	}
+
+	private treatPrismaErrors(err: unknown): never {
+		const unknownError = new InternalServerErrorException(
+			ErrorCodes.CREATE_ERROR,
+			{
+				cause: err,
+			},
+		);
+		if (err instanceof PrismaKnownError) {
+			if (err.code === "P2025") {
+				const cause = err.meta?.cause as string;
+				if (cause == null) throw unknownError;
+				if (cause.includes("Schedule"))
+					throw new BadRequestException(ErrorCodes.SCHEDULE_NOT_FOUND);
+				if (cause.includes("Skill"))
+					throw new BadRequestException(ErrorCodes.SKILL_NOT_FOUND);
+			}
+		}
+		throw unknownError;
 	}
 }
