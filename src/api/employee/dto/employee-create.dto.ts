@@ -15,8 +15,8 @@ export class EmployeeCreateDto {
 	@Field(() => Boolean, { defaultValue: true })
 	status = true;
 
-	@Field(() => Int, { nullable: true })
-	scheduleId?: number | null;
+	@Field(() => Int)
+	scheduleId: number | null;
 
 	schedule: Prisma.ScheduleCreateNestedOneWithoutEmployeesInput = {
 		connect: { id: 0 },
