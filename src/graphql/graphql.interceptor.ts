@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { GqlContextType, GqlExecutionContext } from "@nestjs/graphql";
 import { GraphQLList, GraphQLNonNull, GraphQLResolveInfo } from "graphql";
-import { Observable, tap } from "rxjs";
+import { Observable, catchError, tap } from "rxjs";
 
 @Injectable()
 export class GraphqlInterceptor implements NestInterceptor {
@@ -18,7 +18,7 @@ export class GraphqlInterceptor implements NestInterceptor {
 					console.log("REQUEST INFO");
 					const ctx = GqlExecutionContext.create(context);
 					const info: GraphQLResolveInfo = ctx.getInfo();
-					console.log(`Request Type: ${info.parentType.name}`); // Query/Mutation/Susbcription
+					console.log(`Request Type: ${info.parentType.name}`); // Query/Mutation/Subscription
 					console.log(`Path name: ${info.fieldName}`); // Path name
 
 					if (info.returnType instanceof GraphQLNonNull) {
@@ -37,6 +37,10 @@ export class GraphqlInterceptor implements NestInterceptor {
 					console.log(`Response ${res?.constructor.name}:`);
 					console.log(res); // Result value
 				}
+			}),
+			catchError((err: unknown) => {
+				console.error(err);
+				throw err;
 			}),
 		);
 	}
