@@ -126,7 +126,7 @@ input EmployeeCreateDto {
   lastName: String!
   birthDate: DateTime!
   status: Boolean! = true
-  scheduleId: Int!
+  scheduleId: Int
 }
 
 input EmployeeUpdateDto {
