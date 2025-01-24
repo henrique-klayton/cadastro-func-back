@@ -134,7 +134,8 @@ export class EmployeeService {
 			};
 		}
 
-		employee.scheduleId = null;
+		// Remove scheduleId because it is not used to create relation connection
+		employee.scheduleId = undefined;
 
 		if (current == null) {
 			if (employee.scheduleId == null && employee.status)
