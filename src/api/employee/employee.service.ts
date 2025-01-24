@@ -101,8 +101,10 @@ export class EmployeeService {
 		skillsIds?: number[],
 	): Promise<EmployeeDto> {
 		const data: Prisma.EmployeeUpdateInput = employee;
-		this.validateEmployeeSchedule(employee, data, id);
-		this.validateEmployeeSkills(employee, skillsIds, data, id);
+		const current = await this.findById(id);
+		if (current === null) throw new NotFoundException(ErrorCodes.NOT_FOUND);
+		this.validateEmployeeSchedule(employee, data, current);
+		this.validateEmployeeSkills(employee, skillsIds, data, current);
 
 		return this.prisma.employee.update({ where: { id }, data }).catch((err) => {
 			throw new InternalServerErrorException(ErrorCodes.UPDATE_ERROR, {
@@ -122,7 +124,7 @@ export class EmployeeService {
 	private validateEmployeeSchedule(
 		employee: EmployeeCreateDto | EmployeeUpdateDto,
 		args: Prisma.EmployeeCreateInput | Prisma.EmployeeUpdateInput,
-		employeeId?: string | undefined,
+		current?: EmployeeDto | undefined,
 	): void {
 		if (employee.scheduleId != null) {
 			if (!employee.status)
@@ -132,11 +134,15 @@ export class EmployeeService {
 			};
 		}
 
-		if (employee.scheduleId == null && employee.status)
-			throw new BadRequestException(ErrorCodes.MISSING_SCHEDULE);
 		employee.scheduleId = null;
 
-		if (employeeId != null) {
+		if (current == null) {
+			if (employee.scheduleId == null && employee.status)
+				throw new BadRequestException(ErrorCodes.MISSING_SCHEDULE);
+		} else {
+			// Check if employee status changed to active and a new schedule is being added
+			if (employee.scheduleId == null && employee.status && !current.status)
+				throw new BadRequestException(ErrorCodes.MISSING_SCHEDULE);
 			const data = args as Prisma.EmployeeUpdateInput;
 			// Disconnect relations when updating to inactive
 			if (!employee.status) {
@@ -149,8 +155,9 @@ export class EmployeeService {
 		employee: EmployeeCreateDto | EmployeeUpdateDto,
 		skillsIds: number[] | undefined,
 		args: Prisma.EmployeeCreateInput | Prisma.EmployeeUpdateInput,
-		employeeId?: string | undefined,
+		current?: EmployeeDto | undefined,
 	): void {
+		const employeeId = current?.id;
 		if (!employee.status && skillsIds != null)
 			throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER_RELATIONS);
 
