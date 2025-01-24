@@ -85,26 +85,8 @@ export class EmployeeService {
 		skillsIds?: number[],
 	): Promise<EmployeeDto> {
 		const data: Prisma.EmployeeCreateInput = employee;
-		if (skillsIds != null) {
-			if (!employee.status) {
-				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER_RELATIONS);
-			}
-			data.skills = {
-				create: skillsIds.map((id) => ({
-					skill: { connect: { id, NOT: { status: false } } },
-				})),
-			};
-		}
-
-		if (employee.scheduleId != null) {
-			if (!employee.status) {
-				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER_RELATIONS);
-			}
-			data.schedule = {
-				connect: { id: employee.scheduleId, NOT: { status: false } },
-			};
-		}
-		employee.scheduleId = undefined;
+		this.validateEmployeeSchedule(employee, data);
+		this.validateEmployeeSkills(employee, skillsIds, data);
 
 		return this.prisma.employee.create({ data }).catch((err) => {
 			throw new InternalServerErrorException(ErrorCodes.CREATE_ERROR, {
@@ -119,33 +101,8 @@ export class EmployeeService {
 		skillsIds?: number[],
 	): Promise<EmployeeDto> {
 		const data: Prisma.EmployeeUpdateInput = employee;
-
-		// Update Skills
-		if (skillsIds != null && employee.status) {
-			data.skills = {
-				connectOrCreate: skillsIds.map((skillId) => ({
-					where: { employeeId_skillId: { employeeId: id, skillId } },
-					create: {
-						skill: { connect: { id: skillId, NOT: { status: false } } },
-					},
-				})),
-			};
-		}
-
-		// Update Schedule
-		if (employee.scheduleId != null && employee.status) {
-			data.schedule = {
-				connect: { id: employee.scheduleId, NOT: { status: false } },
-			};
-			employee.scheduleId = undefined;
-		}
-
-		// Disconnect relations when deactivating object
-		if (!employee.status) {
-			data.skills = { deleteMany: { employeeId: id } };
-			data.schedule = { disconnect: {} };
-			employee.scheduleId = undefined;
-		}
+		this.validateEmployeeSchedule(employee, data, id);
+		this.validateEmployeeSkills(employee, skillsIds, data, id);
 
 		return this.prisma.employee.update({ where: { id }, data }).catch((err) => {
 			throw new InternalServerErrorException(ErrorCodes.UPDATE_ERROR, {
@@ -160,5 +117,70 @@ export class EmployeeService {
 				cause: err,
 			});
 		});
+	}
+
+	private validateEmployeeSchedule(
+		employee: EmployeeCreateDto | EmployeeUpdateDto,
+		args: Prisma.EmployeeCreateInput | Prisma.EmployeeUpdateInput,
+		employeeId?: string | undefined,
+	): void {
+		if (employee.scheduleId != null) {
+			if (!employee.status)
+				throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER_RELATIONS);
+			args.schedule = {
+				connect: { id: employee.scheduleId, NOT: { status: false } },
+			};
+		}
+
+		if (employee.scheduleId == null && employee.status)
+			throw new BadRequestException(ErrorCodes.MISSING_SCHEDULE);
+		employee.scheduleId = null;
+
+		if (employeeId != null) {
+			const data = args as Prisma.EmployeeUpdateInput;
+			// Disconnect relations when updating to inactive
+			if (!employee.status) {
+				data.schedule = { disconnect: {} };
+			}
+		}
+	}
+
+	private validateEmployeeSkills(
+		employee: EmployeeCreateDto | EmployeeUpdateDto,
+		skillsIds: number[] | undefined,
+		args: Prisma.EmployeeCreateInput | Prisma.EmployeeUpdateInput,
+		employeeId?: string | undefined,
+	): void {
+		if (!employee.status && skillsIds != null)
+			throw new BadRequestException(ErrorCodes.INACTIVE_REGISTER_RELATIONS);
+
+		if (employeeId == null) {
+			const data = args as Prisma.EmployeeCreateInput;
+			if (skillsIds == null) return;
+			data.skills = {
+				create: skillsIds.map((id) => ({
+					skill: { connect: { id, NOT: { status: false } } },
+				})),
+			};
+		} else {
+			const data = args as Prisma.EmployeeUpdateInput;
+			if (skillsIds == null) {
+				// Disconnect relations when updating to inactive
+				if (!employee.status) {
+					data.skills = { deleteMany: { employeeId } };
+				}
+				return;
+			}
+			data.skills = {
+				connectOrCreate: skillsIds.map((skillId) => {
+					return {
+						where: { employeeId_skillId: { employeeId, skillId } },
+						create: {
+							skill: { connect: { id: skillId, NOT: { status: false } } },
+						},
+					} satisfies Prisma.EmployeeSkillsCreateOrConnectWithoutEmployeeInput;
+				}),
+			};
+		}
 	}
 }

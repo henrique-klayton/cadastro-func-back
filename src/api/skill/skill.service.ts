@@ -35,6 +35,7 @@ export class SkillService {
 		return { data: skills, total: count };
 	}
 
+	// TODO Check if trying to create inactive skill with employees relation
 	async create(
 		skill: SkillCreateDto,
 		employeesIds?: string[],
@@ -55,6 +56,7 @@ export class SkillService {
 		});
 	}
 
+	// TODO Throw an error if an active relation exists while updating to inactive
 	async update(
 		id: number,
 		skill: SkillUpdateDto,
@@ -87,6 +89,7 @@ export class SkillService {
 		});
 	}
 
+	// TODO Check if it has an active relation before delete
 	async delete(id: number): Promise<SkillDto> {
 		return this.prisma.skill.delete({ where: { id } }).catch((err) => {
 			throw new InternalServerErrorException(ErrorCodes.DELETE_ERROR, {

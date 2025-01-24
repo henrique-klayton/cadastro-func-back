@@ -4,7 +4,7 @@ import {
 	InternalServerErrorException,
 } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { PrismaClientKnownRequestError as PrismaKnownError } from "@prisma/client/runtime/library";
 
 import ErrorCodes from "@enums/error-codes";
 import { Pagination } from "@graphql/interfaces/pagination.interface";
@@ -46,6 +46,7 @@ export class ScheduleService {
 		return this.prisma.schedule.create({ data });
 	}
 
+	// TODO Throw an error if an active relation exists while updating to inactive
 	async update(id: number, data: ScheduleUpdateDto): Promise<ScheduleDto> {
 		const where: Prisma.ScheduleWhereUniqueInput = { id };
 		if (!data.status) where.employees = { none: { status: true } };
@@ -58,7 +59,7 @@ export class ScheduleService {
 
 	async delete(id: number): Promise<ScheduleDto> {
 		return this.prisma.schedule.delete({ where: { id } }).catch((err) => {
-			if (err instanceof PrismaClientKnownRequestError && err.message) {
+			if (err instanceof PrismaKnownError && err.message) {
 				if (err.message.match(/constraint.*employee/gi)) {
 					throw new BadRequestException(ErrorCodes.HAS_ACTIVE_RELATIONS);
 				}
