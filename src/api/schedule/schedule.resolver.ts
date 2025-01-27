@@ -3,6 +3,8 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import ErrorCodes from "@enums/error-codes";
 import IntIdArgs from "@graphql/args/int-id-args";
+import dayjs from "dayjs";
+import arrayToCsv from "src/functions/array-to-csv";
 import UpdateScheduleArgs from "./args/update-schedule-args";
 import { ScheduleCreateDto } from "./dto/schedule-create.dto";
 import { SchedulePaginationArgs } from "./dto/schedule-filter-dto";
@@ -25,6 +27,30 @@ export class ScheduleResolver {
 		@Args() { limit: take, offset: skip, filter }: SchedulePaginationArgs,
 	): Promise<PaginatedScheduleDto> {
 		return this.service.findWithPagination({ take, skip }, filter);
+	}
+
+	@Query(() => String)
+	async generateScheduleReport(): Promise<string> {
+		return this.service.findAllReport().then((data) => {
+			const dateFormat = "DD/MM/YYYY HH:mm:ss";
+			const csvData = data.map((item) => {
+				const employeesName = item.employees.map(
+					(employee) => `${employee.firstName} ${employee.lastName}`,
+				);
+				return {
+					...item,
+					startTime: dayjs(item.startTime).format(dateFormat),
+					endTime: dayjs(item.endTime).format(dateFormat),
+					employeesName,
+				};
+			});
+
+			return arrayToCsv(
+				["id", "startTime", "endTime", "type", "status", "employeesName"],
+				csvData,
+				";",
+			);
+		});
 	}
 
 	@Mutation(() => ScheduleDto)

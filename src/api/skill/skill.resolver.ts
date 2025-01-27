@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 
 import ErrorCodes from "@enums/error-codes";
 import IntIdArgs from "@graphql/args/int-id-args";
+import arrayToCsv from "src/functions/array-to-csv";
 import CreateSkillArgs from "./args/create-skill-args";
 import UpdateSkillArgs from "./args/update-skill-args";
 import { SkillPaginationArgs } from "./dto/skill-filter-dto";
@@ -25,6 +26,27 @@ export class SkillResolver {
 		@Args() { limit: take, offset: skip, filter }: SkillPaginationArgs,
 	): Promise<PaginatedSkillDto> {
 		return this.service.findWithPagination({ take, skip }, filter);
+	}
+
+	@Query(() => String)
+	async generateSkillReport(): Promise<string> {
+		return this.service.findAllReport().then((data) => {
+			const csvData = data.map((item) => {
+				const employeesName = item.employees.map(
+					({ employee }) => `${employee.firstName} ${employee.lastName}`,
+				);
+				return {
+					...item,
+					employeesName,
+				};
+			});
+
+			return arrayToCsv(
+				["id", "description", "status", "employeesName"],
+				csvData,
+				";",
+			);
+		});
 	}
 
 	@Mutation(() => SkillDto)

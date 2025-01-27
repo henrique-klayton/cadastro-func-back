@@ -42,6 +42,23 @@ export class ScheduleService {
 		return { data: schedules, total: count };
 	}
 
+	async findAllReport() {
+		const employeeSelect = {
+			select: {
+				id: true,
+				firstName: true,
+				lastName: true,
+			},
+		};
+		return await this.prisma.schedule
+			.findMany({ include: { employees: employeeSelect } })
+			.catch((err: unknown) => {
+				throw new InternalServerErrorException(ErrorCodes.READ_ERROR, {
+					cause: err,
+				});
+			});
+	}
+
 	async create(data: ScheduleCreateDto): Promise<ScheduleDto> {
 		return this.prisma.schedule.create({ data });
 	}

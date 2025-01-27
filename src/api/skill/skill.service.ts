@@ -35,6 +35,25 @@ export class SkillService {
 		return { data: skills, total: count };
 	}
 
+	async findAllReport() {
+		const employeeInclude = {
+			employee: {
+				select: {
+					id: true,
+					firstName: true,
+					lastName: true,
+				},
+			},
+		};
+		return await this.prisma.skill
+			.findMany({ include: { employees: { include: employeeInclude } } })
+			.catch((err: unknown) => {
+				throw new InternalServerErrorException(ErrorCodes.READ_ERROR, {
+					cause: err,
+				});
+			});
+	}
+
 	// TODO Check if trying to create inactive skill with employees relation
 	async create(
 		skill: SkillCreateDto,

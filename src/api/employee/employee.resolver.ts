@@ -56,9 +56,10 @@ export class EmployeeResolver {
 					scheduleStartTime: startTime,
 					scheduleEndTime: endTime,
 					scheduleType: item.schedule?.type,
-					skills: item.skills.map((relation) => relation.skill.description),
+					skills: item.skills.map(({ skill }) => skill.description),
 				};
 			});
+
 			return arrayToCsv(
 				[
 					"id",
