@@ -27,13 +27,13 @@ export class EmployeeService {
 		relations = false,
 	): Promise<EmployeeDto | EmployeeFullDto | null> {
 		const include: Prisma.EmployeeInclude = {
-			schedule: {},
-			skills: { include: { skill: {} } },
+			schedule: true,
+			skills: { include: { skill: true } },
 		};
 
 		type EmployeeWithIncludes = Employee & {
 			schedule: Schedule;
-			skills: { skill: Skill }[];
+			skills: { employeeId: string; skillId: number; skill: Skill }[];
 		};
 
 		const isFullEmployee = (
@@ -65,7 +65,7 @@ export class EmployeeService {
 			.findMany({
 				include: {
 					schedule: true,
-					skills: { include: { skill: {} } },
+					skills: { include: { skill: true } },
 				},
 			})
 			.catch((err: unknown) => {
@@ -92,7 +92,7 @@ export class EmployeeService {
 					take,
 					skip,
 					where,
-					include: { schedule: {} },
+					include: { schedule: true },
 				}),
 			])
 			.catch((err: unknown) => {
@@ -110,7 +110,6 @@ export class EmployeeService {
 		const data: Prisma.EmployeeCreateInput = employee;
 		this.validateEmployeeSchedule(employee, data);
 		this.validateEmployeeSkills(employee, skillsIds, data);
-
 		return this.prisma.employee.create({ data }).catch(this.treatPrismaErrors);
 	}
 
@@ -151,9 +150,6 @@ export class EmployeeService {
 			};
 		}
 
-		// Remove scheduleId because it is not used to create relation connection
-		employee.scheduleId = undefined;
-
 		if (current == null) {
 			if (employee.scheduleId == null && employee.status)
 				throw new BadRequestException(ErrorCodes.MISSING_SCHEDULE);
@@ -164,9 +160,12 @@ export class EmployeeService {
 			const data = args as Prisma.EmployeeUpdateInput;
 			// Disconnect relations when updating to inactive
 			if (!employee.status) {
-				data.schedule = { disconnect: {} };
+				data.schedule = { disconnect: true };
 			}
 		}
+
+		// Remove scheduleId because it is not used to create relation connection
+		employee.scheduleId = undefined;
 	}
 
 	private validateEmployeeSkills(
