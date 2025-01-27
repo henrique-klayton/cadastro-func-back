@@ -88,6 +88,7 @@ type Query {
   employee(id: ID!): EmployeeDto!
   employeeWithRelations(id: ID!): EmployeeFullDto!
   employeeList(limit: Int! = 10, offset: Int! = 0, filter: EmployeeFilterDto!): PaginatedEmployeeDto!
+  generateEmployeeReport: String!
   schedule(id: Int!): ScheduleDto!
   scheduleList(limit: Int! = 10, offset: Int! = 0, filter: ScheduleFilterDto!): PaginatedScheduleDto!
   skill(id: Int!): SkillDto!

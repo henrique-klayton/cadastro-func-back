@@ -60,6 +60,21 @@ export class EmployeeService {
 			});
 	}
 
+	async findAll() {
+		return await this.prisma.employee
+			.findMany({
+				include: {
+					schedule: true,
+					skills: { include: { skill: {} } },
+				},
+			})
+			.catch((err: unknown) => {
+				throw new InternalServerErrorException(ErrorCodes.READ_ERROR, {
+					cause: err,
+				});
+			});
+	}
+
 	async findWithPagination(
 		{ take, skip }: Pagination,
 		{ status, scheduleId: scheduleIdList }: EmployeeFilterDto,
@@ -70,15 +85,21 @@ export class EmployeeService {
 			status: status ?? undefined,
 			schedule,
 		};
-		const [count, employees] = await this.prisma.$transaction([
-			this.prisma.employee.count({ where }),
-			this.prisma.employee.findMany({
-				take,
-				skip,
-				where,
-				include: { schedule: {} },
-			}),
-		]);
+		const [count, employees] = await this.prisma
+			.$transaction([
+				this.prisma.employee.count({ where }),
+				this.prisma.employee.findMany({
+					take,
+					skip,
+					where,
+					include: { schedule: {} },
+				}),
+			])
+			.catch((err: unknown) => {
+				throw new InternalServerErrorException(ErrorCodes.READ_ERROR, {
+					cause: err,
+				});
+			});
 		return { data: employees, total: count };
 	}
 
