@@ -3,6 +3,12 @@
 - [x] Disconnect registers when deactivated?
 - [x] Add filtering to pagination
 - [x] Get skills on employee query when an optional argument is set to true
+- [ ] Text filtering
 - [ ] Query to get employees of a schedule
 - [ ] Add validation to all classes
 - [x] Return correct count on findWithPagination functions (use where in count)
+- [ ] Authentication/Authorization
+  - [ ] Create user model, service and resolvers
+  - [ ] Create JWTs and send on header
+  - [ ] Create auth resolvers
+  - [ ] Return auth error code
