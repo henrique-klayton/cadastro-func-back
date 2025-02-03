@@ -33,9 +33,10 @@ export class GraphqlInterceptor implements NestInterceptor {
 					}
 
 					// Response Info
-					console.log("\n\nRESPONSE INFO");
+					console.log("\nRESPONSE INFO");
 					console.log(`Response ${res?.constructor.name}:`);
 					console.log(res); // Result value
+					console.log("\n\n");
 				}
 			}),
 			catchError((err: unknown) => {
